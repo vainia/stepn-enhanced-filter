@@ -9,7 +9,17 @@ const stepnSortParams = {
 const stepnApi = {
     // TODO: fix page query param - each call to this endpoint returns data for next data set disregarding the page param
     sneakersData: pageIdx => `https://api.stepn.com/run/orderlist?${stepnSortParams.hightToLow}&chain=103&refresh=false&page=${pageIdx}&type=&gType=&quality=&level=0&bread=0`,
-    sneakerPage: id => `https://m.stepn.com/order/${id}`
+    sneakerPage: id => `https://m.stepn.com/order/${id}`,
+    sneakerDetails: (orderId, sessionId) => `https://api.stepn.com/run/orderdata?orderId=${orderId}&sessionID=${sessionId}`
+    // ->data
+    //          ->attrs [0-Efficiency, 1-Luck, 2-Comfort, 3-Resilience] - All bases, [4-7] - All points assigned respectively
+    //          ->breed (0-7)
+    //          ->holes [0-4]
+    //              ->type (1-Efficiency, 2-Luck, 3-Comfort, 4-Resilience)
+    //              ->quality (-1, 0, ...)
+    //          ->level (0-30)
+    //          ->price (?)
+    //          ->type (1-Walker, 2-Jogger, 3-Runner, 4-Trainer) - Not certain
 }
 
 let resultSneaker = null
