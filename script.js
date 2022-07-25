@@ -24,6 +24,10 @@ const stepnApi = {
 
 let resultSneaker = null
 
+const getSessionId = () => new Promise((resolve, reject) => window.cookieStore.get("sessionID").then(
+    data => resolve(encodeURIComponent(data.value))
+))
+
 const findSneaker = pageIdx => fetch(stepnApi.sneakersData(pageIdx), {
     method: "GET",
     mode: "cors",
@@ -33,16 +37,34 @@ const findSneaker = pageIdx => fetch(stepnApi.sneakersData(pageIdx), {
         assignInnerHtmlById(inputIds.filterResultOutput, "No sneaker found")
         return true
     }
-    const targetSneakerIdLength = dataSelectors.targetSneakerIdLength()
+    // const targetSneakerIdLength = dataSelectors.targetSneakerIdLength()
     for (let entry of e.data) {
         assignInnerHtmlById(inputIds.iteratorCurrentPage, `Current Page: ${pageIdx} \n Price: ${formatPrice(entry.sellPrice)}`)
-        const sneakerId = entry.otd.toString()
-        console.log({ a: sneakerId.length, b: targetSneakerIdLength })
-        if (sneakerId.length <= targetSneakerIdLength) {
-            resultSneaker = entry
-            assignInnerHtmlById(inputIds.filterResultOutput, prepareResultHtml(entry))
-            return true
-        }
+        // const sneakerId = entry.otd.toString()
+        // console.log({ a: sneakerId.length, b: targetSneakerIdLength })
+        // if (sneakerId.length <= targetSneakerIdLength) {
+        //     resultSneaker = entry
+        //     assignInnerHtmlById(inputIds.filterResultOutput, prepareResultHtml(entry))
+        //     return true
+        // }
+        const orderId = entry.id.toString()
+        const sessionId = await getSessionId()
+        // TODO: Await necessary amount of ms to avoid geting blacklisted IP
+        fetch(stepnApi.sneakerDetails(orderId, sessionId), {
+            method: "GET",
+            mode: "cors",
+            credentials: "include"
+        }).then((e) => e.json()).then((e) => {
+            if (resultSneaker || e.data.length === 0) {
+                assignInnerHtmlById(inputIds.filterResultOutput, "Something is wrong")
+                return true
+            }
+            if (data.attrs[0] > 9 && data.attrs[3] > 9) {
+                resultSneaker = entry
+                assignInnerHtmlById(inputIds.filterResultOutput, prepareResultHtml(entry))
+                return true
+            }
+        })
     }
     return false
 })
