@@ -8,7 +8,7 @@ const stepnSortParams = {
 
 const stepnApi = {
     // TODO: fix page query param - each call to this endpoint returns data for next data set disregarding the page param
-    sneakersData: pageIdx => `https://api.stepn.com/run/orderlist?${stepnSortParams.hightToLow}&chain=103&refresh=false&page=${pageIdx}&type=&gType=&quality=&level=0&bread=0`,
+    sneakersData: (pageIdx, sessionId) => `https://api.stepn.com/run/orderlist?${stepnSortParams.hightToLow}&chain=103&refresh=false&page=${pageIdx}&type=&gType=&quality=&level=0&bread=0&sessionID=${sessionId}`,
     sneakerPage: id => `https://m.stepn.com/order/${id}`,
     sneakerDetails: (orderId, sessionId) => `https://api.stepn.com/run/orderdata?orderId=${orderId}&sessionID=${sessionId}`
     // ->data
@@ -28,11 +28,11 @@ const getSessionId = () => new Promise((resolve, reject) => window.cookieStore.g
     data => resolve(encodeURIComponent(data.value))
 ))
 
-const findSneaker = pageIdx => fetch(stepnApi.sneakersData(pageIdx), {
+const findSneaker = (pageIdx, sessionId) => fetch(stepnApi.sneakersData(pageIdx, sessionId), {
     method: "GET",
     mode: "cors",
     credentials: "include"
-}).then((e) => e.json()).then((e) => {
+}).then((e) => e.json()).then(async (e) => {
     if (resultSneaker || e.data.length === 0) {
         assignInnerHtmlById(inputIds.filterResultOutput, "No sneaker found")
         return true
@@ -48,18 +48,25 @@ const findSneaker = pageIdx => fetch(stepnApi.sneakersData(pageIdx), {
         //     return true
         // }
         const orderId = entry.id.toString()
-        const sessionId = await getSessionId()
-        // TODO: Await necessary amount of ms to avoid geting blacklisted IP
+        
+        // Sneaker is found
+        if (resultSneaker) {
+            assignInnerHtmlById(inputIds.filterResultOutput, "Sneaker is found")
+            return true
+        }
+
+        // Await necessary amount of ms to avoid geting blacklisted IP
+        await timeout(0.5 * 1000)
         fetch(stepnApi.sneakerDetails(orderId, sessionId), {
             method: "GET",
             mode: "cors",
             credentials: "include"
         }).then((e) => e.json()).then((e) => {
-            if (resultSneaker || e.data.length === 0) {
-                assignInnerHtmlById(inputIds.filterResultOutput, "Something is wrong")
+            if (resultSneaker || !e.data) {
+                assignInnerHtmlById(inputIds.filterResultOutput, "Processing...")
                 return true
             }
-            if (data.attrs[0] > 9 && data.attrs[3] > 9) {
+            if (e.data.attrs[0] > 9 && e.data.attrs[3] > 9) {
                 resultSneaker = entry
                 assignInnerHtmlById(inputIds.filterResultOutput, prepareResultHtml(entry))
                 return true
@@ -68,6 +75,8 @@ const findSneaker = pageIdx => fetch(stepnApi.sneakersData(pageIdx), {
     }
     return false
 })
+
+const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const {fetch: origFetch} = window;
 window.fetch = async (...args) => {
@@ -99,16 +108,18 @@ const formatPrice = (price) => parseFloat(price/1000000).toFixed(2)
 
 const prepareResultHtml = (entry) => `#${entry.otd} - sort by "New to Old" to see the sneaker`
 
-const applyEnhancedFilters = () => {
+const applyEnhancedFilters = async () => {
     let intervalSeconds = 1
     let pageIndex = 0
     resultSneaker = null
 
     assignInnerHtmlById(inputIds.filterResultOutput, "Searching...")
 
-    const genesisSearchInterval = setInterval(() => {
-        findSneaker(pageIndex++).then((finished) => finished && clearInterval(genesisSearchInterval))
-    }, intervalSeconds * 1000)
+    const sessionId = await getSessionId()
+    // TODO: Fix this interval to accomodate timeouts
+    // const genesisSearchInterval = setInterval(() => {
+        findSneaker(pageIndex++, sessionId).then((finished) => finished) // && clearInterval(genesisSearchInterval))
+    // }, intervalSeconds * 1000)
 }
 
 const assignInnerHtmlById = (id, html) => document.getElementById(id).innerHTML = html
