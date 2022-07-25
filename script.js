@@ -2,7 +2,7 @@ const placeholder = document.querySelector("#__next > main > div:last-child > di
 
 const stepnSortParams = {
     lowToHigh: "order=1001",
-    newToOld: "order=1002",
+    latest: "order=1002",
     hightToLow: "order=2002"
 }
 
@@ -51,7 +51,7 @@ const findSneaker = (pageIdx, sessionId) => fetch(stepnApi.sneakersData(pageIdx,
         
         // Sneaker is found
         if (resultSneaker) {
-            assignInnerHtmlById(inputIds.filterResultOutput, "Sneaker is found")
+            // assignInnerHtmlById(inputIds.filterResultOutput, "Sneaker is found")
             return true
         }
 
@@ -63,11 +63,12 @@ const findSneaker = (pageIdx, sessionId) => fetch(stepnApi.sneakersData(pageIdx,
             credentials: "include"
         }).then((e) => e.json()).then((e) => {
             if (resultSneaker || !e.data) {
-                assignInnerHtmlById(inputIds.filterResultOutput, "Processing...")
+                // assignInnerHtmlById(inputIds.filterResultOutput, "Processing...")
                 return true
             }
-            if (e.data.attrs[0] > 9 && e.data.attrs[3] > 9) {
+            if (e.data.attrs[0] > 9 * 10 && e.data.attrs[3] > 9 * 10) {
                 resultSneaker = entry
+                debugger
                 assignInnerHtmlById(inputIds.filterResultOutput, prepareResultHtml(entry))
                 return true
             }
@@ -82,7 +83,7 @@ const {fetch: origFetch} = window;
 window.fetch = async (...args) => {
     return new Promise(async (resolve, reject) => {
         const response = await origFetch(...args)
-        if(!resultSneaker || !args || !args[0] || args[0].indexOf(stepnSortParams.newToOld) < 0) {
+        if(!resultSneaker || !args || !args[0] || args[0].indexOf(stepnSortParams.latest) < 0) {
             resolve(response)
         }
 
@@ -106,7 +107,7 @@ window.fetch = async (...args) => {
 
 const formatPrice = (price) => parseFloat(price/1000000).toFixed(2)
 
-const prepareResultHtml = (entry) => `#${entry.otd} - sort by "New to Old" to see the sneaker`
+const prepareResultHtml = (entry) => `#${entry.otd} - sort by "Latest" to see the sneaker`
 
 const applyEnhancedFilters = async () => {
     let intervalSeconds = 1
