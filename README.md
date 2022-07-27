@@ -7,3 +7,12 @@ Filter for StepN marketplace but better
 2. Paste script in the console, press "enter" to run it and enjoy :)
 
 Chrome extension is comming soon...
+
+![image](https://user-images.githubusercontent.com/38167469/181298364-0b3c0382-5f88-4984-9e86-b5da1a36a19f.png)
+
+If you have any suggessions to this project, don't hesitate and text me. You can find me by this nickname @inapolsky or vanias2806@gmail.com
+
+Donations are welcomed to this wallet `2stFvNdELDQ56C6vD71Lt3jKN9Th4r7cfkpJchwyxJ6x` (GST|GMT|SOL)
+
+#StandWithUkraine 🇺🇦
+Made with love ❤️
