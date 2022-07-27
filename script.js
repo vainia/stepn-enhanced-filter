@@ -165,7 +165,7 @@ const renderTargetOrderList = async () => {
         return
     }
 
-    const sortDropdownButton = document.querySelector("#headlessui-listbox-button-\\:r3\\:")
+    const sortDropdownButton = document.querySelector("#__next > main > div:last-child > div:last-child [id^='headlessui-listbox-button']")
     sortDropdownButton.innerText = "Enchanced Filtering"
     sortDropdownButton.dispatchEvent(new Event('click', { bubbles: true }));
     await timeout(0.25 * 1000)
