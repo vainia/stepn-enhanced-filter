@@ -3,7 +3,7 @@
 Filter for StepN marketplace but better
 
 ## Usage
-1. Open the console in your browser (tested on Chrome). You'll find it in dev tools
+1. Open the console in your browser (tested with Chrome & Firefox on macOS Monterey). You'll find it in dev tools
 2. Paste [this script](script.js) in the console, press "enter" to run it and enjoy :)
 
 Chrome extension is comming soon...

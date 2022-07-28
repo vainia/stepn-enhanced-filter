@@ -4,9 +4,17 @@ const stepnApi = {
     orderData: (orderId, sessionId) => `https://api.stepn.com/run/orderdata?orderId=${orderId}&sessionID=${sessionId}&simulated=true`
 }
 
-const getSessionId = () => new Promise((resolve, reject) => window.cookieStore.get("sessionID").then(
-    data => resolve(encodeURIComponent(data.value))
-))
+const getCookieFromDocument = (name) => document.cookie.split('; ').find((row) => row.startsWith(`${name}=`))?.split('=')[1]
+
+const getSessionId = () => new Promise((resolve, reject) => {
+    if (window.cookieStore) {
+        window.cookieStore.get("sessionID").then(
+            data => resolve(encodeURIComponent(data.value))
+        )
+    } else {
+        resolve(getCookieFromDocument("sessionID"))
+    }
+})
 
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
 const formatPrice = (price) => parseFloat(price / 1000000).toFixed(4)
