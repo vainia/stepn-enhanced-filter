@@ -76,8 +76,23 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
             const orderBaseLuck = orderData.attrs[1] / 10
             const orderBaseCom = orderData.attrs[2] / 10
             const orderBaseRes = orderData.attrs[3] / 10
-    
-            if (minEffBase <= orderBaseEff && minLuckBase <= orderBaseLuck && minComBase <= orderBaseCom && minResBase <= orderBaseRes) {
+            const baseAttributesFilterMatch = minEffBase <= orderBaseEff && minLuckBase <= orderBaseLuck && minComBase <= orderBaseCom && minResBase <= orderBaseRes
+
+            const useSocketsFilters = Object.keys(selectedGemFilters).length !== 0
+            const socketsFilterMatch = !useSocketsFilters || orderData.holes.every((hole, idx) => {
+                pos = idx + 1
+
+                // No filter specified for this socket
+                if (!selectedGemFilters[pos]) {
+                    return true
+                }
+
+                const typeFilterMatch = typeof selectedGemFilters[pos].type === "undefined" || selectedGemFilters[pos].type == hole.type
+                const qualityFilterMatch = typeof selectedGemFilters[pos].quality === "undefined" || selectedGemFilters[pos].quality == hole.quality
+                return typeFilterMatch && qualityFilterMatch
+            })
+
+            if (baseAttributesFilterMatch && socketsFilterMatch) {
                 targetOrderList.push(order)
                 assignInnerHtmlById(inputIds.filterResultOutput, `Sneakers found: ${targetOrderList.length}/${limitResultsCount}`)
                 if (targetOrderList.length >= limitResultsCount) {
@@ -292,9 +307,9 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                         onclick="toggleDropdown(this)">
                         <span>${number}t #</span>${selectArrowElement}
                     </button>
-                    <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[80px] pl-[13px] border bg-white hidden">
+                    <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[80px] border bg-white hidden">
                         ${Object.keys(gemSockets).map(socketTypeId => `<li class="cursor-pointer">
-                            <span class="nav-button" onclick="applyDropdownSelection(this)" socket-number=${number} socket-type-id="${socketTypeId}">${gemSockets[socketTypeId]}</span>
+                            <span class="nav-button flex w-full justify-center" onclick="applyDropdownSelection(this)" socket-number=${number} socket-type-id="${socketTypeId}">${gemSockets[socketTypeId]}</span>
                         </li>`).join("")}
                     </ul>
                 </nav>
@@ -306,9 +321,9 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                         onclick="toggleDropdown(this)">
                         <span>${number}q #</span>${selectArrowElement}
                     </button>
-                    <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[80px] pl-[13px] border bg-white hidden">
+                    <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[50px] border bg-white hidden">
                         ${gemQualities.map(qualityId => `<li class="cursor-pointer">
-                            <span class="nav-button" onclick="applyDropdownSelection(this)" socket-number=${number} socket-quality-id="${qualityId}">${qualityId}</span>
+                            <span class="nav-button flex w-full justify-center" onclick="applyDropdownSelection(this)" socket-number=${number} socket-quality-id="${qualityId}">${qualityId}</span>
                         </li>`).join("")}
                     </ul>
                 </nav>
