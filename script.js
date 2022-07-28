@@ -219,7 +219,7 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
     ${['minEffBase', 'minLuckBase', 'minComBase', 'minResBase'].map(ft =>
     `<label for="${inputIds[ft]}" class="capitalize">${ft.replace("min", "Min. ").replace("Base", " Base")}</label>
     <div class="range-verbose flex">
-        <input type="range" min="1" max="112" name="${inputIds[ft]}" id="${inputIds[ft]}"
+        <input type="range" min="1" max="112" step="0.1" name="${inputIds[ft]}" id="${inputIds[ft]}"
             value="1" class="w-full h-[34px] border bg-white text-sm capitalize m-auto mb-4" oninput="this.nextElementSibling.value = this.value" />
         <output class="px-5 text-lg font-bold">1</output>
     </div>`).join("")}
