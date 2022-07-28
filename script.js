@@ -198,11 +198,71 @@ const dataSelectors = {
 }
 
 const copyWalletToBuffer = () => {
-    var copyText = document.getElementById("stepn-wallet-address")
+    const copyText = document.getElementById("stepn-wallet-address")
     copyText.select()
     copyText.setSelectionRange(0, 99999)
     navigator.clipboard.writeText(copyText.value)
-  }
+}
+
+const gemSockets = {
+    1: "Efficiency",
+    2: "Luck",
+    3: "Comfort",
+    4: "Resilience"
+}
+const gemQualities = [-1, 0, 1, 2, 3, 4, 5]
+
+const getSocketIconPath = (type, quality) => `/images/gem_${type}_${quality}.svg`
+
+const selectedGemFilters = {}
+
+const selectArrowElement = `<img src="/images/select.svg" alt="" class="ml-[2px]" />`
+const toggleDropdown = target => {
+    // Toggle will erase the current selection visually and from state
+    // const socketNumber = target.attributes['socket-number'].value
+    // delete selectedGemFilters[socketNumber]
+    // target.innerHTML = socketNumber + "t #" + selectArrowElement
+
+    const optionsList = target.nextElementSibling
+    optionsList.querySelectorAll(".dropdown-selection").forEach(e => e.remove())
+
+    optionsList.classList.toggle('hidden')
+}
+
+const markSelectedDropDownOption = target => target.innerHTML = `<div class="relative">
+    <div class="bg-[#64ffcb] w-[50px] rounded-[3px] -z-10 h-[6px] -left-[3px] absolute top-[7px]"></div>
+</div>` + target.innerHTML
+
+const applyDropdownSelection = (target) => {
+    const dropDownButton = target.parentElement.parentElement.previousElementSibling
+    toggleDropdown(dropDownButton)
+
+    // markSelectedDropDownOption(target)
+
+    const socketNumber = target.attributes['socket-number'].value
+
+    if (target.attributes['socket-type-id']) {
+        const socketTypeId = target.attributes['socket-type-id'].value
+        selectedGemFilters[socketNumber] = selectedGemFilters[socketNumber] || {}
+        selectedGemFilters[socketNumber]['type'] = socketTypeId
+
+        // Update dropdown button text
+        document.getElementById(`filter-socket-type-${socketNumber}`).innerHTML = socketNumber + "t " + gemSockets[socketTypeId].charAt(0) + selectArrowElement
+    }
+    else if (target.attributes['socket-quality-id']) { 
+        const socketQualityId = target.attributes['socket-quality-id'].value
+        selectedGemFilters[socketNumber] = selectedGemFilters[socketNumber] || {}
+        selectedGemFilters[socketNumber]['quality'] = socketQualityId
+
+        // Update dropdown button text
+        document.getElementById(`filter-socket-quality-${socketNumber}`).innerHTML = socketNumber + "q " + socketQualityId + selectArrowElement
+    }
+    
+    // Update socket image icon
+    if (selectedGemFilters[socketNumber]['type']) {
+        document.getElementById(`filter-socket-image-${socketNumber}`).src = getSocketIconPath(selectedGemFilters[socketNumber]['type'], selectedGemFilters[socketNumber]['quality'] || -1)
+    }
+}
 
 const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky" class="p-5">
     <h1 class="mb-5 border-b-[4px] border-green-400">
@@ -223,6 +283,38 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
             value="1" class="w-full h-[34px] border bg-white text-sm capitalize m-auto mb-4" oninput="this.nextElementSibling.value = this.value" />
         <output class="px-5 text-lg font-bold">1</output>
     </div>`).join("")}
+    <div class="stepn-sockets-filter flex mb=[20px]">
+        ${Object.keys(gemSockets).map(number => 
+        `<div class="justify-between py-[5px] flex bg-[#f9f9f9]">
+            <div class="px-[2px]">
+                <nav class="stepn-filter__socket-type-select">
+                    <button id="filter-socket-type-${number}" socket-number=${number} class="px-[6px] pt-[3.5px] pb-[4.5px] m-auto bg-white border-border rounded-xl text-xs border flex items-center justify-center"
+                        onclick="toggleDropdown(this)">
+                        <span>${number}t #</span>${selectArrowElement}
+                    </button>
+                    <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[80px] pl-[13px] border bg-white hidden">
+                        ${Object.keys(gemSockets).map(socketTypeId => `<li class="cursor-pointer">
+                            <span class="nav-button" onclick="applyDropdownSelection(this)" socket-number=${number} socket-type-id="${socketTypeId}">${gemSockets[socketTypeId]}</span>
+                        </li>`).join("")}
+                    </ul>
+                </nav>
+                <div class="w-[50px] h-[50px] relative">
+                    <img id="filter-socket-image-${number}" src="${getSocketIconPath(number, -1)}" alt="gem lock icon" class="" />
+                </div>
+                <nav class="stepn-filter__socket-quality-select">
+                    <button id="filter-socket-quality-${number}" socket-number=${number} class="px-[6px] pt-[3.5px] pb-[4.5px] m-auto bg-white border-border rounded-xl text-xs border flex items-center justify-center"
+                        onclick="toggleDropdown(this)">
+                        <span>${number}q #</span>${selectArrowElement}
+                    </button>
+                    <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[80px] pl-[13px] border bg-white hidden">
+                        ${gemQualities.map(qualityId => `<li class="cursor-pointer">
+                            <span class="nav-button" onclick="applyDropdownSelection(this)" socket-number=${number} socket-quality-id="${qualityId}">${qualityId}</span>
+                        </li>`).join("")}
+                    </ul>
+                </nav>
+            </div>
+        </div>`).join("")}
+    </div>
     <button class="w-full h-[34px] border bg-white text-sm capitalize m-auto mb-4" onclick="applyEnhancedFilters();">
         Apply Filters
     </button>
