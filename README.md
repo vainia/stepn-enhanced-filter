@@ -8,7 +8,7 @@ Filter for StepN marketplace but better
 
 Chrome extension is comming soon...
 
-If you have any suggessions to this project, don't hesitate to write me. You can find me by this nickname @inapolsky or vanias2806@gmail.com
+If you have any suggessions to this project, don't hesitate to write me. [My linktree.](https://linktr.ee/inapolsky)
 
 ## Change log
 
