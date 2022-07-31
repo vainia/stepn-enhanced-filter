@@ -1,6 +1,6 @@
 {
   "name": "Enhanced Filter for STEPN",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Better sneakers management for STEPN Marketplace (by @inapolsky)",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["https://*.stepn.com/*"],
