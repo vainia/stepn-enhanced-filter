@@ -16,7 +16,7 @@ If you have any suggessions to this project, don't hesitate to write me. You can
 ![image](https://user-images.githubusercontent.com/38167469/181298364-0b3c0382-5f88-4984-9e86-b5da1a36a19f.png)
 
 ### v1.1.0 - Sockets Filter
-![image](https://user-images.githubusercontent.com/38167469/181546790-da63d868-4812-43d3-a932-9bd3dabafcc6.png)
+![image](https://user-images.githubusercontent.com/38167469/182031838-c716c3a0-eeff-4753-8671-47a376efea9f.png)
 
 Support the project `2stFvNdELDQ56C6vD71Lt3jKN9Th4r7cfkpJchwyxJ6x` GST | GMT | SOL
 
