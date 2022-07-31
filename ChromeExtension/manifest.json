@@ -1,0 +1,38 @@
+{
+  "name": "Enhanced Filter for STEPN",
+  "version": "1.1.0",
+  "description": "Better sneakers management for STEPN Marketplace (by @inapolsky)",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["https://*.stepn.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.stepn.com/*"],
+      "js": ["contentScript.js"],
+      "css": ["contentScript.css"],
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/activate.png",
+        "assets/delete.png",
+        "contentPrivileged.js"
+      ],
+      "matches": ["https://*.stepn.com/*"]
+    }
+  ],
+  "action": {
+    "default_title": "Enhanced Filter for STEPN",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "assets/logo.png",
+    "48": "assets/logo.png",
+    "128": "assets/logo.png"
+  },
+  "manifest_version": 3
+}
