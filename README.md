@@ -19,6 +19,7 @@ If you have any suggessions to this project, don't hesitate to write me. You can
 ![image](https://user-images.githubusercontent.com/38167469/182031838-c716c3a0-eeff-4753-8671-47a376efea9f.png)
 
 ### v2.0.0 - Chrome Extension & Order Bookmarks
+![image](https://user-images.githubusercontent.com/38167469/182032272-c181617e-2c66-4e84-843f-8515b16d12fa.png)
 
 # FAQs
 
