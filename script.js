@@ -302,7 +302,7 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
         ${Object.keys(gemSockets).map(number => 
         `<div class="justify-between py-[5px] flex bg-[#f9f9f9]">
             <div class="px-[2px]">
-                <nav class="stepn-filter__socket-type-select">
+                <nav class="stepn-filter__socket-type-select relative">
                     <button id="filter-socket-type-${number}" socket-number=${number} class="px-[6px] pt-[3.5px] pb-[4.5px] m-auto bg-white border-border rounded-xl text-xs border flex items-center justify-center"
                         onclick="toggleDropdown(this)">
                         <span>${number}t #</span>${selectArrowElement}
@@ -316,7 +316,7 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                 <div class="w-[50px] h-[50px] relative">
                     <img id="filter-socket-image-${number}" src="${getSocketIconPath(number, -1)}" alt="gem lock icon" class="" />
                 </div>
-                <nav class="stepn-filter__socket-quality-select">
+                <nav class="stepn-filter__socket-quality-select relative">
                     <button id="filter-socket-quality-${number}" socket-number=${number} class="px-[6px] pt-[3.5px] pb-[4.5px] m-auto bg-white border-border rounded-xl text-xs border flex items-center justify-center"
                         onclick="toggleDropdown(this)">
                         <span>${number}q #</span>${selectArrowElement}
