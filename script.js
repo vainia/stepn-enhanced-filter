@@ -79,7 +79,8 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
             const baseAttributesFilterMatch = minEffBase <= orderBaseEff && minLuckBase <= orderBaseLuck && minComBase <= orderBaseCom && minResBase <= orderBaseRes
 
             const useSocketsFilters = Object.keys(selectedGemFilters).length !== 0
-            const socketsFilterMatch = !useSocketsFilters || orderData.holes.every((hole, idx) => {
+            const gemSocketsInOrder = dataSelectors.filterGemsInOrder()
+            const socketsFilterMatch = !useSocketsFilters || (gemSocketsInOrder && orderData.holes.every((hole, idx) => {
                 pos = idx + 1
 
                 // No filter specified for this socket
@@ -90,8 +91,15 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
                 const typeFilterMatch = typeof selectedGemFilters[pos].type === "undefined" || selectedGemFilters[pos].type == hole.type
                 const qualityFilterMatch = typeof selectedGemFilters[pos].quality === "undefined" || selectedGemFilters[pos].quality == hole.quality
                 return typeFilterMatch && qualityFilterMatch
-            })
-
+            })) || Object.values(selectedGemFilters).every(gemFilter => orderData.holes.some(hole => {
+                if (hole.used) return false
+                const typeFilterMatch = typeof gemFilter.type === "undefined" || gemFilter.type == hole.type
+                const qualityFilterMatch = typeof gemFilter.quality === "undefined" || gemFilter.quality == hole.quality
+                if (typeFilterMatch && qualityFilterMatch) {
+                    hole.used = true
+                    return true
+                }
+            }))
             if (baseAttributesFilterMatch && socketsFilterMatch) {
                 targetOrderList.push(order)
                 assignInnerHtmlById(inputIds.filterResultOutput, `Sneakers found: ${targetOrderList.length}/${limitResultsCount}`)
@@ -202,6 +210,7 @@ const inputIds = {
     minLuckBase: "filter-min-luck-base",
     minComBase: "filter-min-com-base",
     minResBase: "filter-min-res-base",
+    gemsInOrder: "filter-gems-in-order",
     iteratorCurrentPage: "filter-result-current-page"
 }
 
@@ -210,6 +219,7 @@ const dataSelectors = {
     filterMinLuckBase: () => parseInt(document.getElementById(inputIds.minLuckBase).value || '0'),
     filterMinComBase: () => parseInt(document.getElementById(inputIds.minComBase).value || '0'),
     filterMinResBase: () => parseInt(document.getElementById(inputIds.minResBase).value || '0'),
+    filterGemsInOrder: () => document.getElementById(inputIds.gemsInOrder).checked,
 }
 
 const copyWalletToBuffer = () => {
@@ -329,6 +339,10 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                 </nav>
             </div>
         </div>`).join("")}
+    </div>
+    <div class="flex mb-5">
+        <input type="checkbox" id="${inputIds.gemsInOrder}" name="${inputIds.gemsInOrder}" class="mr-2">
+        <label for="${inputIds.gemsInOrder}">Gem sockets must follow the order</label>
     </div>
     <button class="w-full h-[34px] border bg-white text-sm capitalize m-auto mb-4" onclick="applyEnhancedFilters();">
         Apply Filters
