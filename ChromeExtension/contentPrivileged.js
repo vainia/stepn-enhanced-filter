@@ -88,7 +88,8 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
             const baseAttributesFilterMatch = minEffBase <= orderBaseEff && minLuckBase <= orderBaseLuck && minComBase <= orderBaseCom && minResBase <= orderBaseRes
 
             const useSocketsFilters = Object.keys(selectedGemFilters).length !== 0
-            const socketsFilterMatch = !useSocketsFilters || orderData.holes.every((hole, idx) => {
+            const gemSocketsInOrder = dataSelectors.filterGemsInOrder()
+            const socketsFilterMatch = !useSocketsFilters || (gemSocketsInOrder && orderData.holes.every((hole, idx) => {
                 pos = idx + 1
 
                 // No filter specified for this socket
@@ -99,8 +100,15 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
                 const typeFilterMatch = typeof selectedGemFilters[pos].type === "undefined" || selectedGemFilters[pos].type == hole.type
                 const qualityFilterMatch = typeof selectedGemFilters[pos].quality === "undefined" || selectedGemFilters[pos].quality == hole.quality
                 return typeFilterMatch && qualityFilterMatch
-            })
-
+            })) || Object.values(selectedGemFilters).every(gemFilter => orderData.holes.some(hole => {
+                if (hole.used) return false
+                const typeFilterMatch = typeof gemFilter.type === "undefined" || gemFilter.type == hole.type
+                const qualityFilterMatch = typeof gemFilter.quality === "undefined" || gemFilter.quality == hole.quality
+                if (typeFilterMatch && qualityFilterMatch) {
+                    hole.used = true
+                    return true
+                }
+            }))
             if (baseAttributesFilterMatch && socketsFilterMatch) {
                 targetOrderList.push(order)
                 assignInnerHtmlById(inputIds.filterResultOutput, `Sneakers found: ${targetOrderList.length}/${limitResultsCount}`)
@@ -221,6 +229,7 @@ const inputIds = {
     minLuckBase: "filter-min-luck-base",
     minComBase: "filter-min-com-base",
     minResBase: "filter-min-res-base",
+    gemsInOrder: "filter-gems-in-order",
     iteratorCurrentPage: "filter-result-current-page"
 }
 
@@ -229,6 +238,7 @@ const dataSelectors = {
     filterMinLuckBase: () => parseInt(document.getElementById(inputIds.minLuckBase).value || '0'),
     filterMinComBase: () => parseInt(document.getElementById(inputIds.minComBase).value || '0'),
     filterMinResBase: () => parseInt(document.getElementById(inputIds.minResBase).value || '0'),
+    filterGemsInOrder: () => document.getElementById(inputIds.gemsInOrder).checked,
 }
 
 const copyWalletToBuffer = () => {
@@ -321,7 +331,7 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
         ${Object.keys(gemSockets).map(number => 
         `<div class="justify-between py-[5px] flex bg-[#f9f9f9]">
             <div class="px-[2px]">
-                <nav class="stepn-filter__socket-type-select">
+                <nav class="stepn-filter__socket-type-select relative">
                     <button id="filter-socket-type-${number}" socket-number=${number} class="px-[6px] pt-[3.5px] pb-[4.5px] m-auto bg-white border-border rounded-xl text-xs border flex items-center justify-center"
                         onclick="toggleDropdown(this)">
                         <span>${number}t #</span>${selectArrowElement}
@@ -335,7 +345,7 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                 <div class="w-[50px] h-[50px] relative">
                     <img id="filter-socket-image-${number}" src="${getSocketIconPath(number, -1)}" alt="gem lock icon" class="" />
                 </div>
-                <nav class="stepn-filter__socket-quality-select">
+                <nav class="stepn-filter__socket-quality-select relative">
                     <button id="filter-socket-quality-${number}" socket-number=${number} class="px-[6px] pt-[3.5px] pb-[4.5px] m-auto bg-white border-border rounded-xl text-xs border flex items-center justify-center"
                         onclick="toggleDropdown(this)">
                         <span>${number}q #</span>${selectArrowElement}
@@ -348,6 +358,10 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                 </nav>
             </div>
         </div>`).join("")}
+    </div>
+    <div class="flex mb-5">
+        <input type="checkbox" id="${inputIds.gemsInOrder}" name="${inputIds.gemsInOrder}" class="mr-2">
+        <label for="${inputIds.gemsInOrder}">Gem sockets must follow the order</label>
     </div>
     <button class="w-full h-[34px] border bg-white text-sm capitalize m-auto mb-4" onclick="applyEnhancedFilters();">
         Apply Filters
