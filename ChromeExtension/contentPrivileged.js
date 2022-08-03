@@ -149,7 +149,7 @@ window.fetch = async (...args) => {
             return
         }
 
-        const requestSimulatedByExtension = args[0].indexOf("simulated") === -1
+        const requestSimulatedByExtension = args[0].indexOf("simulated") > 0
 
         // If new order list is requested by user grab native filter parameters to combine with enhanced filter
         if (!requestSimulatedByExtension) {
