@@ -173,7 +173,7 @@ window.fetch = async (...args) => {
                     window.postMessage({ from: 'contentPrivileged.js', type: "newOrderData", orders: body.data })
 
                     // Return original response if request shouldn't be tampered
-                    if (!requestSimulatedByExtension || targetOrderList.length === 0 || !args || !args[0]) {
+                    if (requestSimulatedByExtension || targetOrderList.length === 0 || !args || !args[0]) {
                         return body
                     }
 
