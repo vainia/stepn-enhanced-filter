@@ -17,7 +17,7 @@ const SocketsFilterSectionComp = () => {
   return (
     <>
       <div>{JSON.stringify(socketFilters)}</div>
-      <Box>
+      <div>
         {socketFiltersCount < 4 && (
           <Button
             variant="outlined"
@@ -57,7 +57,7 @@ const SocketsFilterSectionComp = () => {
             Remove last added
           </Button>
         )}
-      </Box>
+      </div>
 
       {socketFiltersCount > 0 && (
         <Box>

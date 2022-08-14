@@ -13,9 +13,11 @@ const FiltersSectionComp = () => {
           gap: 2,
           width: "100%",
           "& > div": {
-            p: 2,
-            boxShadow: "sm",
-            borderRadius: "xs",
+            px: 2,
+            "&.JoyBox-root": {
+              boxShadow: "sm",
+              borderRadius: "xs",
+            },
             display: "flex",
             justifyContent: "space-evenly",
           },

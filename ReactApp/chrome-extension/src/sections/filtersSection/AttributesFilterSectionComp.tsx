@@ -20,7 +20,7 @@ const AttributesFilterSectionComp = () => {
   return (
     <>
       <div>{JSON.stringify(attributeFilters)}</div>
-      <Box>
+      <div>
         {attributeFiltersActive.length < 4 && (
           <Button
             variant="outlined"
@@ -60,7 +60,7 @@ const AttributesFilterSectionComp = () => {
             Remove last added
           </Button>
         )}
-      </Box>
+      </div>
 
       {attributeFiltersActive.map((v, i) => (
         <Box key={v.type}>
@@ -70,6 +70,7 @@ const AttributesFilterSectionComp = () => {
               flexDirection: "column",
               justifyContent: "center",
               flex: "1 0 auto",
+              marginLeft: "15px",
             }}
             type={v.type}
             minBase={v.minBase}
