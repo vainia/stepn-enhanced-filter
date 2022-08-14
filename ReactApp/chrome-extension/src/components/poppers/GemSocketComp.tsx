@@ -1,6 +1,8 @@
 import { Typography } from "@mui/joy"
 import { Divider } from "@mui/material"
 import { useState } from "react"
+import { socketFilterSlice } from "../../redux/reducers/socketFilterReducer"
+import { useAppDispatch } from "../../redux/store"
 import {
   attributeTypes,
   getAttributeIconUrl,
@@ -25,6 +27,8 @@ type TGemSocketProps = {
 const GemSocketComp = ({ index, gemType, gemLevel }: TGemSocketProps) => {
   const [type, setType] = useState(gemType)
   const [level, setLevel] = useState(gemLevel)
+
+  const dispatch = useAppDispatch()
 
   return (
     <IconWithPopperComp
@@ -53,7 +57,17 @@ const GemSocketComp = ({ index, gemType, gemLevel }: TGemSocketProps) => {
               height={35}
               width={35}
               selected={getAttributeTypeForGemType(type) === at}
-              onClick={() => setType(getGemTypeFromAttribute(at))}
+              onClick={() => {
+                const selectedType = getGemTypeFromAttribute(at)
+                dispatch(
+                  socketFilterSlice.actions.update({
+                    index,
+                    level,
+                    type: selectedType,
+                  })
+                )
+                setType(selectedType)
+              }}
             />
           ))}
           <Divider sx={{ margin: "10px" }} />
@@ -66,7 +80,16 @@ const GemSocketComp = ({ index, gemType, gemLevel }: TGemSocketProps) => {
               height={35}
               width={35}
               selected={level === gl}
-              onClick={() => setLevel(gl)}
+              onClick={() => {
+                dispatch(
+                  socketFilterSlice.actions.update({
+                    index,
+                    level: gl,
+                    type,
+                  })
+                )
+                setLevel(gl)
+              }}
             />
           ))}
         </>

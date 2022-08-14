@@ -1,94 +1,69 @@
 import { AutoGraph, RemoveCircleOutline } from "@mui/icons-material"
 import { Box, Button } from "@mui/joy"
-import { useState } from "react"
 import AttributesSliderComp from "../../components/AttributesSliderComp"
 import AttributeTypeComp from "../../components/poppers/AttributeTypeComp"
-import { TAttribute } from "../../services/stepnAttributesService"
-
-type TTypesInUse = {
-  [key in TAttribute]: {
-    usedBy?: number
-  }
-}
+import {
+  attributeFilterSlice,
+  selectAttributeFilters,
+  selectAttributeFiltersActive,
+  selectAvailableAttributeTypes,
+} from "../../redux/reducers/attributesFilterReducer"
+import { useAppDispatch, useAppSelector } from "../../redux/store"
 
 const AttributesFilterSectionComp = () => {
-  const [filtersCount, setFiltersCount] = useState(0)
-  const [typesInUse, setTypesInUse] = useState<TTypesInUse>({
-    comfort: {},
-    efficiency: {},
-    luck: {},
-    resilience: {},
-  })
+  const attributeFilters = useAppSelector(selectAttributeFilters)
+  const attributeFiltersActive = useAppSelector(selectAttributeFiltersActive)
+  const availableAttributeTypes = useAppSelector(selectAvailableAttributeTypes)
 
-  const removeUsedTypeByFilterId = (id: number) => {
-    Object.keys(typesInUse).forEach((key) => {
-      if (typesInUse[key as TAttribute].usedBy === id) {
-        typesInUse[key as TAttribute] = {}
-        setTypesInUse(typesInUse)
-      }
-    })
-  }
-
-  const availableTypes = Object.keys(typesInUse)
-    .map((key) => {
-      if (typeof typesInUse[key as TAttribute].usedBy === "undefined") {
-        return key as TAttribute
-      }
-      return null
-    })
-    .filter((key) => key) as TAttribute[]
-
-  const markUsedType = (id: number, newType: TAttribute) => {
-    removeUsedTypeByFilterId(id)
-    const updatedTypesInUse = {
-      ...typesInUse,
-      [newType]: {
-        usedBy: id,
-      },
-    }
-    setTypesInUse(updatedTypesInUse)
-  }
+  const dispatch = useAppDispatch()
 
   return (
     <>
-      <div>{JSON.stringify(typesInUse)}</div>
+      <div>{JSON.stringify(attributeFilters)}</div>
       <Box>
-        {filtersCount < 4 && (
+        {attributeFiltersActive.length < 4 && (
           <Button
             variant="outlined"
             color="success"
             startIcon={<AutoGraph />}
             sx={{ flex: "1" }}
             onClick={() => {
-              filtersCount < 4 && setFiltersCount(filtersCount + 1)
+              dispatch(
+                attributeFilterSlice.actions.replaceUsedTypeByFilterId({
+                  usedBy: attributeFiltersActive.length,
+                  newType: availableAttributeTypes[0],
+                })
+              )
             }}
           >
             Add attribute filter
           </Button>
         )}
-        {filtersCount > 0 && (
+        {attributeFiltersActive.length > 0 && (
           <Button
             variant="outlined"
             color="warning"
             startIcon={<RemoveCircleOutline />}
             sx={{
-              marginLeft: filtersCount < 4 ? "15px" : "unset",
-              flex: filtersCount === 4 ? "1" : "unset",
+              marginLeft: attributeFiltersActive.length < 4 ? "15px" : "unset",
+              flex: attributeFiltersActive.length === 4 ? "1" : "unset",
             }}
             onClick={() => {
-              if (filtersCount > 0) {
-                removeUsedTypeByFilterId(filtersCount - 1)
-                setFiltersCount(filtersCount - 1)
-              }
+              const lastFilterId = attributeFiltersActive.length - 1
+              dispatch(
+                attributeFilterSlice.actions.removeUsedByFilterId({
+                  usedBy: lastFilterId,
+                })
+              )
             }}
           >
-            Remove last
+            Remove last added
           </Button>
         )}
       </Box>
 
-      {[...Array(filtersCount)].map((v, i) => (
-        <Box key={i}>
+      {attributeFiltersActive.map((v, i) => (
+        <Box key={v.type}>
           <AttributesSliderComp
             sx={{
               display: "flex",
@@ -96,17 +71,19 @@ const AttributesFilterSectionComp = () => {
               justifyContent: "center",
               flex: "1 0 auto",
             }}
+            type={v.type}
+            minBase={v.minBase}
+            minAssigned={v.minAssigned}
           />
           <AttributeTypeComp
-            id={i}
-            attributeType={availableTypes[0]}
-            availableTypes={availableTypes}
+            usedBy={v.usedBy}
+            attributeType={v.type}
+            availableTypes={availableAttributeTypes}
             button={{
               sx: { flex: "0", marginLeft: "15px" },
               width: "40px",
               height: "40px",
             }}
-            onTypeChange={markUsedType}
           />
         </Box>
       ))}

@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux"
-import counterReducer from "./reducers/counterReducer"
+import attributeFilterReducer from "./reducers/attributesFilterReducer"
+import socketFilterReducer from "./reducers/socketFilterReducer"
 
 const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    socketFilters: socketFilterReducer,
+    attributeFilters: attributeFilterReducer,
   },
 })
 

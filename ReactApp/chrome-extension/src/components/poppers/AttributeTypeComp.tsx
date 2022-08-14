@@ -1,5 +1,7 @@
 import { Typography } from "@mui/joy"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { attributeFilterSlice } from "../../redux/reducers/attributesFilterReducer"
+import { useAppDispatch } from "../../redux/store"
 import {
   attributeTypes,
   getAttributeIconUrl,
@@ -9,7 +11,7 @@ import IconWithPopperComp from "../IconWithPopperComp"
 import SvgIconComp from "../svgHolders/SvgIconComp"
 
 type TAttributeTypeProps = {
-  id: number
+  usedBy: number
   attributeType: TAttribute
   availableTypes?: TAttribute[]
   button?: {
@@ -17,23 +19,18 @@ type TAttributeTypeProps = {
     width?: string
     height?: string
   }
-  onTypeChange?: (id: number, newType: TAttribute) => void
 }
 
 const AttributeTypeComp = ({
-  id,
+  usedBy,
   attributeType,
   button,
-  onTypeChange,
   availableTypes,
 }: TAttributeTypeProps) => {
+  const dispatch = useAppDispatch()
+
   const [type, setType] = useState(attributeType)
   const alt = "Attribute Type"
-
-  useEffect(() => {
-    onTypeChange && onTypeChange(id, type)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const types = availableTypes ? availableTypes : attributeTypes
 
@@ -61,7 +58,12 @@ const AttributeTypeComp = ({
               width={35}
               selected={type === at}
               onClick={() => {
-                onTypeChange && onTypeChange(id, at)
+                dispatch(
+                  attributeFilterSlice.actions.replaceUsedTypeByFilterId({
+                    usedBy,
+                    newType: at,
+                  })
+                )
                 setType(at)
               }}
             />
