@@ -1,10 +1,10 @@
 module.exports = {
     webpack: {
-        configure: (webpackConfig, {env, paths}) => {
+        configure: (webpackConfig, { env, paths }) => {
             return {
                 ...webpackConfig,
                 entry: {
-                    main: [env === 'development' && require.resolve('react-dev-utils/webpackHotDevClient'),paths.appIndexJs].filter(Boolean),
+                    main: [env === 'development' && require.resolve('react-dev-utils/webpackHotDevClient'), paths.appIndexJs].filter(Boolean),
                     content: './src/services/chromeDomEvaluator.ts',
                 },
                 output: {
@@ -18,5 +18,4 @@ module.exports = {
             }
         },
     }
- }
- 
+}

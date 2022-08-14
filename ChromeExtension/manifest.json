@@ -16,7 +16,7 @@
     "activeTab"
   ],
   "optional_permissions": [
-    "https://*.stepn.com/*"
+    "tabs"
   ],
   "background": {
     "service_worker": "background.js"

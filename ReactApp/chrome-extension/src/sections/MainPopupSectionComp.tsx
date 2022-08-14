@@ -1,12 +1,11 @@
 import { Tabs, TabList, Tab, TabPanel } from "@mui/joy"
-import { currentHostnameIncludes } from "../utils/browserUtils"
 import AdjustmentsSectionComp from "./adjustmentsSection/AdjustmentsSectionComp"
 import FiltersSectionComp from "./filtersSection/FiltersSectionComp"
 
 const MainPopupSectionComp = () => {
-  if (!currentHostnameIncludes("localhost")) {
-    return <div className="title">This is not a STEPN Marketplace page.</div>
-  }
+  // if (!currentHostnameIncludes("localhost")) {
+  //   return <div className="title">This is not a STEPN Marketplace page.</div>
+  // }
 
   return (
     <Tabs defaultValue={0} sx={{ width: "100%", margin: "5px" }}>
