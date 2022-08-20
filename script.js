@@ -77,6 +77,9 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
             const orderBaseCom = orderData.attrs[2] / 10
             const orderBaseRes = orderData.attrs[3] / 10
             const baseAttributesFilterMatch = minEffBase <= orderBaseEff && minLuckBase <= orderBaseLuck && minComBase <= orderBaseCom && minResBase <= orderBaseRes
+            const noPointsAssigned = dataSelectors.filterNoPointsAssigned()
+            const noPointsAssignedFilterMatch = (!noPointsAssigned) || (noPointsAssigned && orderData.attrs[4] == 0 && orderData.attrs[5] == 0 && orderData.attrs[6] == 0 && orderData.attrs[7] == 0)
+
 
             const useSocketsFilters = Object.keys(selectedGemFilters).length !== 0
             const gemSocketsInOrder = dataSelectors.filterGemsInOrder()
@@ -100,7 +103,7 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
                     return true
                 }
             }))
-            if (baseAttributesFilterMatch && socketsFilterMatch) {
+            if (baseAttributesFilterMatch && socketsFilterMatch && noPointsAssignedFilterMatch) {
                 targetOrderList.push(order)
                 assignInnerHtmlById(inputIds.filterResultOutput, `Sneakers found: ${targetOrderList.length}/${limitResultsCount}`)
                 if (targetOrderList.length >= limitResultsCount) {
@@ -211,6 +214,7 @@ const inputIds = {
     minComBase: "filter-min-com-base",
     minResBase: "filter-min-res-base",
     gemsInOrder: "filter-gems-in-order",
+    gemsNoPointsAssigned: "filter-no-points-assigned",
     iteratorCurrentPage: "filter-result-current-page"
 }
 
@@ -220,6 +224,7 @@ const dataSelectors = {
     filterMinComBase: () => parseInt(document.getElementById(inputIds.minComBase).value || '0'),
     filterMinResBase: () => parseInt(document.getElementById(inputIds.minResBase).value || '0'),
     filterGemsInOrder: () => document.getElementById(inputIds.gemsInOrder).checked,
+    filterNoPointsAssigned: () => document.getElementById(inputIds.gemsNoPointsAssigned).checked
 }
 
 const copyWalletToBuffer = () => {
@@ -308,6 +313,10 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
             value="1" class="w-full h-[34px] border bg-white text-sm capitalize m-auto mb-4" oninput="this.nextElementSibling.value = this.value" />
         <output class="px-5 text-lg font-bold">1</output>
     </div>`).join("")}
+    <div class="flex mb-5">
+        <input type="checkbox" id="${inputIds.gemsNoPointsAssigned}" name="${inputIds.gemsNoPointsAssigned}" class="mr-2">
+        <label for="${inputIds.gemsNoPointsAssigned}">Points must not be assigned</label>
+    </div>
     <div class="stepn-sockets-filter flex mb=[20px]">
         ${Object.keys(gemSockets).map(number => 
         `<div class="justify-between py-[5px] flex bg-[#f9f9f9]">
