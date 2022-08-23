@@ -80,6 +80,10 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
             const noPointsAssigned = dataSelectors.filterNoPointsAssigned()
             const noPointsAssignedFilterMatch = (!noPointsAssigned) || (noPointsAssigned && orderData.attrs[4] == 0 && orderData.attrs[5] == 0 && orderData.attrs[6] == 0 && orderData.attrs[7] == 0)
 
+            //Filter to select shoes whose max points were assigned to a specific attribute
+            const attrToCheckPoints = orderData.attrs.slice(0,4).map((a, i) => a + orderData.attrs.slice(4,8)[i]);
+            const maxPointsAttrFilterMatch = (selectedMaxAttrFilter == 0) || (selectedMaxAttrFilter != 0 && attrToCheckPoints.every(attr => attr <= attrToCheckPoints[selectedMaxAttrFilter-1]))
+
 
             const useSocketsFilters = Object.keys(selectedGemFilters).length !== 0
             const gemSocketsInOrder = dataSelectors.filterGemsInOrder()
@@ -103,7 +107,7 @@ const findSneaker = (pageIdx, sessionId) => new Promise((resolve, reject) => {
                     return true
                 }
             }))
-            if (baseAttributesFilterMatch && socketsFilterMatch && noPointsAssignedFilterMatch) {
+            if (baseAttributesFilterMatch && socketsFilterMatch && noPointsAssignedFilterMatch && maxPointsAttrFilterMatch) {
                 targetOrderList.push(order)
                 assignInnerHtmlById(inputIds.filterResultOutput, `Sneakers found: ${targetOrderList.length}/${limitResultsCount}`)
                 if (targetOrderList.length >= limitResultsCount) {
@@ -214,7 +218,8 @@ const inputIds = {
     minComBase: "filter-min-com-base",
     minResBase: "filter-min-res-base",
     gemsInOrder: "filter-gems-in-order",
-    gemsNoPointsAssigned: "filter-no-points-assigned",
+    attrNoPointsAssigned: "filter-no-points-assigned",
+    attrMaxAssignedPoints: "filter-attr-max-points",
     iteratorCurrentPage: "filter-result-current-page"
 }
 
@@ -224,7 +229,7 @@ const dataSelectors = {
     filterMinComBase: () => parseInt(document.getElementById(inputIds.minComBase).value || '0'),
     filterMinResBase: () => parseInt(document.getElementById(inputIds.minResBase).value || '0'),
     filterGemsInOrder: () => document.getElementById(inputIds.gemsInOrder).checked,
-    filterNoPointsAssigned: () => document.getElementById(inputIds.gemsNoPointsAssigned).checked
+    filterNoPointsAssigned: () => document.getElementById(inputIds.attrNoPointsAssigned).checked
 }
 
 const copyWalletToBuffer = () => {
@@ -263,7 +268,7 @@ const markSelectedDropDownOption = target => target.innerHTML = `<div class="rel
     <div class="bg-[#64ffcb] w-[50px] rounded-[3px] -z-10 h-[6px] -left-[3px] absolute top-[7px]"></div>
 </div>` + target.innerHTML
 
-const applyDropdownSelection = (target) => {
+const applyDropdownSocketSelection = (target) => {
     const dropDownButton = target.parentElement.parentElement.previousElementSibling
     toggleDropdown(dropDownButton)
 
@@ -294,6 +299,22 @@ const applyDropdownSelection = (target) => {
     }
 }
 
+let selectedMaxAttrFilter = 0
+
+const applyDropdownMaxAttrSelection = (target) => {
+    const dropDownButton = target.parentElement.parentElement.previousElementSibling
+    toggleDropdown(dropDownButton)
+
+    if (target.attributes['attr-type-id']) { 
+        const attrTypeId = target.attributes['attr-type-id'].value
+        selectedMaxAttrFilter = attrTypeId
+
+        // Update dropdown button text
+        document.getElementById(`filter-maxpoints-attr-type`).innerHTML = gemSockets[attrTypeId] + selectArrowElement
+    }
+    
+}
+
 const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky" class="p-5">
     <h1 class="mb-5 border-b-[4px] border-green-400">
         <b>Enhanced Filtering</b>
@@ -314,8 +335,22 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
         <output class="px-5 text-lg font-bold">1</output>
     </div>`).join("")}
     <div class="flex mb-5">
-        <input type="checkbox" id="${inputIds.gemsNoPointsAssigned}" name="${inputIds.gemsNoPointsAssigned}" class="mr-2">
-        <label for="${inputIds.gemsNoPointsAssigned}">Points must not be assigned</label>
+        <input type="checkbox" id="${inputIds.attrNoPointsAssigned}" name="${inputIds.attrNoPointsAssigned}" class="mr-2">
+        <label for="${inputIds.attrNoPointsAssigned}">Points must not be assigned</label>
+    </div>
+    <div class="max-assigned-points flex mb-5">
+        <label for="${inputIds.attrMaxAssignedPoints}">Max points on: </label>
+        <nav class="stepn-filter_points-on-attr-type-select relative" style="margin-left:30px">
+            <button id="filter-maxpoints-attr-type" class="px-[6px] pt-[3.5px] pb-[4.5px] m-auto bg-white border-border rounded-xl text-xs border flex items-center justify-center"
+                onclick="toggleDropdown(this)">
+                <span>None</span>${selectArrowElement}
+            </button>
+            <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[80px] border bg-white hidden">
+                ${Object.keys(gemSockets).map(attrTypeId => `<li class="cursor-pointer">
+                    <span class="nav-button flex w-full justify-center" onclick="applyDropdownMaxAttrSelection(this)" attr-type-id="${attrTypeId}">${gemSockets[attrTypeId]}</span>
+                </li>`).join("")}
+            </ul>
+        </nav>
     </div>
     <div class="stepn-sockets-filter flex mb=[20px]">
         ${Object.keys(gemSockets).map(number => 
@@ -328,7 +363,7 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                     </button>
                     <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[80px] border bg-white hidden">
                         ${Object.keys(gemSockets).map(socketTypeId => `<li class="cursor-pointer">
-                            <span class="nav-button flex w-full justify-center" onclick="applyDropdownSelection(this)" socket-number=${number} socket-type-id="${socketTypeId}">${gemSockets[socketTypeId]}</span>
+                            <span class="nav-button flex w-full justify-center" onclick="applyDropdownSocketSelection(this)" socket-number=${number} socket-type-id="${socketTypeId}">${gemSockets[socketTypeId]}</span>
                         </li>`).join("")}
                     </ul>
                 </nav>
@@ -342,7 +377,7 @@ const enhancedFiltersFormString = `<div id="stepn-enhanced-filters-by-inapolsky"
                     </button>
                     <ul class="absolute text-sm border-border z-30 rounded-xl mt-1 w-[50px] border bg-white hidden">
                         ${gemQualities.map(qualityId => `<li class="cursor-pointer">
-                            <span class="nav-button flex w-full justify-center" onclick="applyDropdownSelection(this)" socket-number=${number} socket-quality-id="${qualityId}">${qualityId}</span>
+                            <span class="nav-button flex w-full justify-center" onclick="applyDropdownSocketSelection(this)" socket-number=${number} socket-quality-id="${qualityId}">${qualityId}</span>
                         </li>`).join("")}
                     </ul>
                 </nav>
