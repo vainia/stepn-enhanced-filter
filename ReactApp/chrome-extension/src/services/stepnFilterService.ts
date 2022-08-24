@@ -47,11 +47,11 @@ export const checkSockets = (orderData: IOrderData) => {
       const typeFilterMatch =
         // TODO: verify this condition
         typeof socketFilters[socketOrder].type === "undefined" ||
-        socketFilters[socketOrder].type == hole.type
+        socketFilters[socketOrder].type === hole.type
 
       const qualityFilterMatch =
         typeof socketFilters[socketOrder].quality === "undefined" ||
-        socketFilters[socketOrder].quality == hole.quality
+        socketFilters[socketOrder].quality === hole.quality
 
       return typeFilterMatch && qualityFilterMatch
     })
@@ -71,16 +71,18 @@ export const checkSockets = (orderData: IOrderData) => {
 
         const typeFilterMatch =
           typeof socketFilter.type === "undefined" ||
-          socketFilter.type == filteredHole.type
+          // TODO: test if comparison works
+          socketFilter.type === filteredHole.type
 
         const qualityFilterMatch =
           typeof socketFilter.quality === "undefined" ||
-          socketFilter.quality == filteredHole.quality
+          socketFilter.quality === filteredHole.quality
 
         if (typeFilterMatch && qualityFilterMatch) {
           filteredHole.checked = true
           return true
         }
+        return false
       }
     )
     return someUncheckedHoleMatchesFilter

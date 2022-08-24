@@ -45,6 +45,21 @@ export const applyEnhancedFilters = async () => {
 
   //TODO: notify popup to display progress element
 
+  const notifyWithCurrentIterationInfo = (
+    itIndex: number,
+    itSetCount: number,
+    formattedSellPrice: string,
+    foundOrdersAfterIt: IStepnOrder[]
+  ) => {
+    foundSneakerOrders = foundOrdersAfterIt
+    console.log(
+      itIndex,
+      itSetCount,
+      formattedSellPrice,
+      foundSneakerOrders.length
+    )
+  }
+
   while (true) {
     await timeout(requestTimeoutSeconds * 1000)
     const sessionId = getSessionId()
@@ -56,20 +71,7 @@ export const applyEnhancedFilters = async () => {
       limitResultsCount,
       requestTimeoutSeconds,
       foundSneakerOrders,
-      (
-        itIndex: number,
-        itSetCount: number,
-        formattedSellPrice: string,
-        foundOrdersAfterIt: IStepnOrder[]
-      ) => {
-        foundSneakerOrders = foundOrdersAfterIt
-        console.log(
-          itIndex,
-          itSetCount,
-          formattedSellPrice,
-          foundSneakerOrders.length
-        )
-      }
+      notifyWithCurrentIterationInfo
     )
     if (finishedFiltering) {
       interceptStepnRequests(foundSneakerOrders)

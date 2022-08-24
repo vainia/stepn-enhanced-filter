@@ -1,6 +1,7 @@
 import { postMessageFromPrivilegedContentToExtension } from "./chromeExtensionService"
 import { IStepnOrder } from "./stepnApiService"
 
+// eslint-disable-next-line
 let paramsDefinedByUser =
   "&order=2001&chain=103&type=&gType=&quality=&level=0&breed=0"
 
@@ -46,10 +47,10 @@ export const interceptStepnRequests = (foundSneakerOrders?: IStepnOrder[]) => {
         .json()
         .then((body) => {
           response.json = () => {
-            // TODO: Use
-            // postMessageFromPrivilegedContentToExtension("newOrderData", {
-            //   order: body.data,
-            // })
+            // TODO: update to use
+            postMessageFromPrivilegedContentToExtension("newOrderData", {
+              order: body.data,
+            })
 
             const avoidInterception =
               requestSimulatedByExtension ||

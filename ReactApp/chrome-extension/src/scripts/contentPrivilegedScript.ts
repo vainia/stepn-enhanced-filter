@@ -11,5 +11,3 @@ placeholder?.insertAdjacentHTML(
 
 interceptStepnRequests()
 applyEnhancedFilters()
-
-export default {}

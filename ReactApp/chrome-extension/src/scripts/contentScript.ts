@@ -51,5 +51,3 @@ if (!inChromeExtensionPopupContext()) {
   window.addEventListener("message", messagesFromPrivilegedScript)
   loadContentPrivilegedScript()
 }
-
-export default {}

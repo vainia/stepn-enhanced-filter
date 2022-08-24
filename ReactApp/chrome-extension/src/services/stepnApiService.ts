@@ -156,5 +156,3 @@ const getOrderData = async (orderId: number, sessionId: string) =>
         resolve(data)
       })
   })
-
-export default {}
