@@ -1,4 +1,4 @@
-import { Sheet, Box, checkboxClasses } from "@mui/joy"
+import { Sheet, Box, checkboxClasses, Button } from "@mui/joy"
 import AttributesFilterSectionComp from "./AttributesFilterSectionComp"
 import SocketsFilterSectionComp from "./SocketsFilterSectionComp"
 
@@ -32,6 +32,8 @@ const FiltersSectionComp = () => {
       >
         <AttributesFilterSectionComp />
         <SocketsFilterSectionComp />
+
+        <Button>Run filters</Button>
 
         {/* Apply filters section */}
         {/* Save filters group section save filter -> name -> confirm */}

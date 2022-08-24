@@ -10,8 +10,9 @@ const rootReducer = combineReducers({
   attributeFilters: attributeFilterReducer,
 })
 
+export const persistentStorageKey = "enhancedFilter"
 const persistConfig = {
-  key: "root",
+  key: persistentStorageKey,
   storage,
 }
 
@@ -19,6 +20,10 @@ const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const store = configureStore({
   reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 })
 
 type AppDispatch = typeof store.dispatch

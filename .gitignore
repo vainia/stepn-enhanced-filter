@@ -1,2 +1,4 @@
 ChromeExtension.pem
 ReactApp/chrome-extension/src/assets/gems
+ChromeExtension/popup.html
+ChromeExtension/static
