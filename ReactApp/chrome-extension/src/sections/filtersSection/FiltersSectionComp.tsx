@@ -1,4 +1,6 @@
 import { Sheet, Box, checkboxClasses, Button } from "@mui/joy"
+import store from "../../redux/store"
+import { sendMessageToCurrentTab } from "../../services/chromeMessagingService"
 import AttributesFilterSectionComp from "./AttributesFilterSectionComp"
 import SocketsFilterSectionComp from "./SocketsFilterSectionComp"
 
@@ -33,7 +35,21 @@ const FiltersSectionComp = () => {
         <AttributesFilterSectionComp />
         <SocketsFilterSectionComp />
 
-        <Button>Run filters</Button>
+        <Button
+          onClick={() => {
+            const { attributeFilters, socketFilters } = store.getState()
+            sendMessageToCurrentTab({
+              type: "StartSearch",
+              data: {
+                attributeFilters,
+                socketFilters,
+              },
+              from: "EnhancedFilterPopup",
+            })
+          }}
+        >
+          Start search
+        </Button>
 
         {/* Apply filters section */}
         {/* Save filters group section save filter -> name -> confirm */}

@@ -1,17 +1,20 @@
+import { TStoreState } from "../redux/store"
 import { IOrderData, IOrderDataHole } from "./stepnApiService"
-import { EGemLevel } from "./stepnGemService"
 
-export const checkBaseAttributes = (orderData: IOrderData) => {
+export const checkBaseAttributes = (
+  orderData: IOrderData,
+  storeState: TStoreState
+) => {
   const orderBaseEff = orderData.attrs[0] / 10
   const orderBaseLuck = orderData.attrs[1] / 10
   const orderBaseCom = orderData.attrs[2] / 10
   const orderBaseRes = orderData.attrs[3] / 10
 
-  // TODO: Get from storage
-  const minEffBase = 0
-  const minLuckBase = 0
-  const minComBase = 0
-  const minResBase = 0
+  // TODO: update algorithm to only consider presented values
+  const minEffBase = storeState.attributeFilters.efficiency.minBase || 0
+  const minLuckBase = storeState.attributeFilters.luck.minBase || 0
+  const minComBase = storeState.attributeFilters.comfort.minBase || 0
+  const minResBase = storeState.attributeFilters.resilience.minBase || 0
 
   const baseAttributesFilterMatch =
     minEffBase <= orderBaseEff &&
@@ -22,16 +25,14 @@ export const checkBaseAttributes = (orderData: IOrderData) => {
   return baseAttributesFilterMatch
 }
 
-export const checkSockets = (orderData: IOrderData) => {
+export const checkSockets = (
+  orderData: IOrderData,
+  storeState: TStoreState
+) => {
+  const useSocketsFilters = storeState.socketFilters.sockets
   // TODO: Get from storage
-  const useSocketsFilters = false
   const gemSocketsInOrder = false
-  const socketFilters = [
-    {
-      type: 1,
-      quality: EGemLevel.Common,
-    },
-  ]
+  const socketFilters = storeState.socketFilters.sockets
 
   if (!useSocketsFilters) return true
 
@@ -90,9 +91,12 @@ export const checkSockets = (orderData: IOrderData) => {
   return socketsMatching
 }
 
-export const allFiltersMatching = (orderData: IOrderData) => {
-  if (!checkSockets(orderData)) return false
-  if (!checkBaseAttributes(orderData)) return false
+export const allFiltersMatching = (
+  orderData: IOrderData,
+  storeState: TStoreState
+) => {
+  if (!checkSockets(orderData, storeState)) return false
+  if (!checkBaseAttributes(orderData, storeState)) return false
   return true
 }
 

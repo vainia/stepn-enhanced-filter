@@ -9,9 +9,9 @@ import {
   getAttributeTypeForGemType,
 } from "../../services/stepnAttributesService"
 import {
-  EGemLevel,
+  EGemQuality,
   EGemType,
-  gemLevels,
+  gemQualities,
   getGemIconUrl,
   getGemTypeFromAttribute,
 } from "../../services/stepnGemService"
@@ -21,7 +21,7 @@ import SvgIconComp from "../svgHolders/SvgIconComp"
 type TGemSocketProps = {
   index: number
   gemType: EGemType
-  gemLevel: EGemLevel
+  gemLevel: EGemQuality
 }
 
 const GemSocketComp = ({ index, gemType, gemLevel }: TGemSocketProps) => {
@@ -62,7 +62,7 @@ const GemSocketComp = ({ index, gemType, gemLevel }: TGemSocketProps) => {
                 dispatch(
                   socketFilterSlice.actions.update({
                     index,
-                    level,
+                    quality: level,
                     type: selectedType,
                   })
                 )
@@ -72,7 +72,7 @@ const GemSocketComp = ({ index, gemType, gemLevel }: TGemSocketProps) => {
           ))}
           <Divider sx={{ margin: "10px" }} />
           <Typography>Level (from)</Typography>
-          {gemLevels.map((gl) => (
+          {gemQualities.map((gl) => (
             <SvgIconComp
               key={gl}
               src={getGemIconUrl(type, gl)}
@@ -84,7 +84,7 @@ const GemSocketComp = ({ index, gemType, gemLevel }: TGemSocketProps) => {
                 dispatch(
                   socketFilterSlice.actions.update({
                     index,
-                    level: gl,
+                    quality: gl,
                     type,
                   })
                 )

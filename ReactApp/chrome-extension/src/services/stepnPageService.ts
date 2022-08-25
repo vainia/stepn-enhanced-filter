@@ -1,4 +1,5 @@
 import { getCookie } from "typescript-cookie"
+import { TStoreState } from "../redux/store"
 import { timeout } from "../utils/kronosUtils"
 import { findSneakersByFilters, IStepnOrder } from "./stepnApiService"
 import { interceptStepnRequests } from "./stepnInterceptorService"
@@ -35,7 +36,10 @@ export const getSessionId = () => {
 
 export const formatPrice = (price: number) => (price / 1000000).toFixed(4)
 
-export const applyEnhancedFilters = async () => {
+export const applyEnhancedFilters = async (
+  storeState: TStoreState,
+  sessionId: string
+) => {
   let pageIndex = 0
   let foundSneakerOrders: IStepnOrder[] = []
 
@@ -52,6 +56,7 @@ export const applyEnhancedFilters = async () => {
     foundOrdersAfterIt: IStepnOrder[]
   ) => {
     foundSneakerOrders = foundOrdersAfterIt
+    // TODO: notify here
     console.log(
       itIndex,
       itSetCount,
@@ -62,8 +67,6 @@ export const applyEnhancedFilters = async () => {
 
   while (true) {
     await timeout(requestTimeoutSeconds * 1000)
-    const sessionId = getSessionId()
-    if (!sessionId) break
 
     const finishedFiltering = await findSneakersByFilters(
       pageIndex++,
@@ -71,7 +74,8 @@ export const applyEnhancedFilters = async () => {
       limitResultsCount,
       requestTimeoutSeconds,
       foundSneakerOrders,
-      notifyWithCurrentIterationInfo
+      notifyWithCurrentIterationInfo,
+      storeState
     )
     if (finishedFiltering) {
       interceptStepnRequests(foundSneakerOrders)

@@ -2,7 +2,7 @@ import { AutoGraph, Close, RemoveCircleOutline } from "@mui/icons-material"
 import { Button, Box, Checkbox } from "@mui/joy"
 import GemSocketComp from "../../components/poppers/GemSocketComp"
 import { useAppSelector, useAppDispatch } from "../../redux/store"
-import { EGemLevel, EGemType } from "../../services/stepnGemService"
+import { EGemQuality, EGemType } from "../../services/stepnGemService"
 import {
   selectSocketFilters,
   socketFilterSlice,
@@ -16,7 +16,6 @@ const SocketsFilterSectionComp = () => {
 
   return (
     <>
-      <div>{JSON.stringify(socketFilters)}</div>
       <div>
         {socketFiltersCount < 4 && (
           <Button
@@ -30,7 +29,7 @@ const SocketsFilterSectionComp = () => {
                   socketFilterSlice.actions.add({
                     index: socketFiltersCount,
                     type: EGemType.Comfort,
-                    level: EGemLevel.Common,
+                    quality: EGemQuality.Common,
                   })
                 )
               }
@@ -65,7 +64,7 @@ const SocketsFilterSectionComp = () => {
             <GemSocketComp
               key={i}
               index={v.index}
-              gemLevel={v.level}
+              gemLevel={v.quality}
               gemType={v.type}
             />
           ))}

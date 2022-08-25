@@ -1,6 +1,7 @@
+import { TStoreState } from "../redux/store"
 import { timeout } from "../utils/kronosUtils"
 import { allFiltersMatching } from "./stepnFilterService"
-import { EGemLevel, EGemType } from "./stepnGemService"
+import { EGemQuality, EGemType } from "./stepnGemService"
 import { formatPrice } from "./stepnPageService"
 
 let paramsDefinedByUser =
@@ -46,7 +47,8 @@ export const findSneakersByFilters = (
     itSetCount: number,
     formattedSellPrice: string,
     foundOrdersAfterIt: IStepnOrder[]
-  ) => void
+  ) => void,
+  storeState: TStoreState
 ) =>
   new Promise((resolve, reject) => {
     const orderListUrl = stepnEndpoints.orderList(pageIdx, sessionId)
@@ -99,7 +101,7 @@ export const findSneakersByFilters = (
             continue
           }
 
-          if (!allFiltersMatching(orderData)) {
+          if (!allFiltersMatching(orderData, storeState)) {
             continue
           }
 
@@ -129,7 +131,7 @@ export interface IOrderData {
 
 export interface IOrderDataHole {
   type: EGemType
-  quality: EGemLevel
+  quality: EGemQuality
 }
 
 enum ESneakerType {

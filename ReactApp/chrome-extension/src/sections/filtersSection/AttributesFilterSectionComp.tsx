@@ -19,7 +19,6 @@ const AttributesFilterSectionComp = () => {
 
   return (
     <>
-      <div>{JSON.stringify(attributeFilters)}</div>
       <div>
         {attributeFiltersActive.length < 4 && (
           <Button

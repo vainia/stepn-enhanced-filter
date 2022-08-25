@@ -1,5 +1,3 @@
-import { sendMessageToCurrentTab } from "../services/chromeTabsService"
-
 interface IBookmarkProps {
   key: string
   identifier: string
@@ -8,9 +6,10 @@ interface IBookmarkProps {
 }
 
 const Bookmark = ({ identifier, name, callbackOnDelete }: IBookmarkProps) => {
-  const onDelete = () =>
-    sendMessageToCurrentTab({ type: "deleteBookmark" }, callbackOnDelete)
-  const onActivate = () => sendMessageToCurrentTab({ type: "activateBookmark" })
+  const onDelete = () => {}
+  // sendMessageToCurrentTab({ type: "deleteBookmark" }, callbackOnDelete)
+  const onActivate = () => {}
+  //sendMessageToCurrentTab({ type: "activateBookmark" })
 
   return (
     <div key={identifier} className="bookmark">

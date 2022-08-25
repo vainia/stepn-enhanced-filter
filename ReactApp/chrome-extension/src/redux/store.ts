@@ -1,7 +1,11 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit"
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux"
-import attributeFilterReducer from "./reducers/attributesFilterReducer"
-import socketFilterReducer from "./reducers/socketFilterReducer"
+import attributeFilterReducer, {
+  TAttributeFilterState,
+} from "./reducers/attributesFilterReducer"
+import socketFilterReducer, {
+  ISocketFilterState,
+} from "./reducers/socketFilterReducer"
 import { persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage"
 
@@ -9,6 +13,11 @@ const rootReducer = combineReducers({
   socketFilters: socketFilterReducer,
   attributeFilters: attributeFilterReducer,
 })
+
+export type TStoreState = {
+  attributeFilters: TAttributeFilterState
+  socketFilters: ISocketFilterState
+}
 
 export const persistentStorageKey = "enhancedFilter"
 const persistConfig = {

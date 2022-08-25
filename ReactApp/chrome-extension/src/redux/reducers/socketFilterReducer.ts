@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { EGemLevel, EGemType } from "../../services/stepnGemService"
+import { EGemQuality, EGemType } from "../../services/stepnGemService"
 import { RootState } from "../store"
 
 interface ISocketFilter {
   index: number
   type: EGemType
-  level: EGemLevel
+  quality: EGemQuality
 }
 
-interface ISocketFilterState {
+export interface ISocketFilterState {
   sockets: ISocketFilter[]
 }
 

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { TAttribute } from "../../services/stepnAttributesService"
 import { RootState } from "../store"
 
-type TAttributeFilterState = {
+export type TAttributeFilterState = {
   [key in TAttribute]: {
     usedBy?: number
     minBase?: number

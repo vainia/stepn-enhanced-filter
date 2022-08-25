@@ -8,7 +8,7 @@ const MainPopupSectionComp = () => {
   // }
 
   return (
-    <Tabs defaultValue={0} sx={{ width: "100%", margin: "5px" }}>
+    <Tabs defaultValue={0} sx={{ width: "100%" }}>
       <TabList variant="soft" color="neutral">
         <Tab>Filters</Tab>
         <Tab>Adjustments</Tab>
