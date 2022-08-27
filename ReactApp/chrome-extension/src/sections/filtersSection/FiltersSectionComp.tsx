@@ -15,6 +15,7 @@ import {
   sendMessageToCurrentTab,
 } from "../../services/chromeMessagingService"
 import { TSearchResultUpdate } from "../../types/messageTypes"
+import { timeout } from "../../utils/kronosUtils"
 import AttributesFilterSectionComp from "./AttributesFilterSectionComp"
 import SocketsFilterSectionComp from "./SocketsFilterSectionComp"
 
@@ -25,6 +26,7 @@ const FiltersSectionComp = () => {
   const [userLoggedIn, setUserLoggedIn] = useState(chrome.tabs ? false : true)
   const [countResults, setCountResults] = useState(0)
   const [disableStartButton, setDisableStartButton] = useState(false)
+  const [skeletonHidden, setSkeletonHidden] = useState(true)
 
   listenToChromeMessages<string | TSearchResultUpdate>((message) => {
     if (message.from !== "ContentScript") return
@@ -45,8 +47,20 @@ const FiltersSectionComp = () => {
       from: "ReactApp",
     })
 
+    timeout(100).then(() => skeletonHidden && setSkeletonHidden(false))
+
     return (
-      <Stack spacing={1}>
+      <Stack
+        className={skeletonHidden ? "hidden" : ""}
+        sx={{
+          transition: "opacity 1s",
+          opacity: 1,
+          "&.hidden": {
+            opacity: 0,
+          },
+        }}
+        spacing={1}
+      >
         <Skeleton animation="pulse" />
         <Skeleton animation="wave" />
         <Skeleton animation="pulse" />
