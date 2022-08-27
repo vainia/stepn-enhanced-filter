@@ -1,20 +1,50 @@
-import { Sheet, Box, checkboxClasses, Button } from "@mui/joy"
+import {
+  Sheet,
+  Box,
+  checkboxClasses,
+  Button,
+  Stack,
+  Typography,
+} from "@mui/joy"
+import { Skeleton } from "@mui/material"
+import { useState } from "react"
 import store from "../../redux/store"
-import { sendMessageToCurrentTab } from "../../services/chromeMessagingService"
+import {
+  listenToChromeMessages,
+  sendMessageToCurrentTab,
+} from "../../services/chromeMessagingService"
 import AttributesFilterSectionComp from "./AttributesFilterSectionComp"
 import SocketsFilterSectionComp from "./SocketsFilterSectionComp"
 
 const FiltersSectionComp = () => {
-  // sendMessageToCurrentTab<null, string>(
-  //   {
-  //     type: "CheckSession",
-  //     data: null,
-  //     from: "EnhancedFilterPopup",
-  //   },
-  //   (sessionId) => {
-  //     if (!sessionId) alert("Not logged in")
-  //   }
-  // )
+  // Let the page render when react app is rendered outside of the extension
+  const [userLoggedIn, setUserLoggedIn] = useState(chrome ? false : true)
+
+  if (!userLoggedIn) {
+    sendMessageToCurrentTab<null, string>({
+      type: "CheckSession",
+      data: null,
+      from: "ReactApp",
+    })
+
+    listenToChromeMessages((message) => {
+      if (message.from !== "ContentScript") return
+      if (message.type === "CheckSession") setUserLoggedIn(!!message.data)
+    })
+    return (
+      <Stack spacing={1}>
+        <Skeleton animation="pulse" />
+        <Skeleton animation="wave" />
+        <Skeleton animation="pulse" />
+        <Typography textAlign={"center"}>
+          Awaiting STEPN user session
+        </Typography>
+        <Skeleton animation="wave" />
+        <Skeleton animation="pulse" />
+        <Skeleton animation="wave" />
+      </Stack>
+    )
+  }
 
   return (
     <>
@@ -55,7 +85,7 @@ const FiltersSectionComp = () => {
                 attributeFilters,
                 socketFilters,
               },
-              from: "EnhancedFilterPopup",
+              from: "ContentScript",
             })
           }}
         >

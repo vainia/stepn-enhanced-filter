@@ -5,6 +5,8 @@ export const checkBaseAttributes = (
   orderData: IOrderData,
   storeState: TStoreState
 ) => {
+  debugger
+
   const orderBaseEff = orderData.attrs[0] / 10
   const orderBaseLuck = orderData.attrs[1] / 10
   const orderBaseCom = orderData.attrs[2] / 10
@@ -29,6 +31,8 @@ export const checkSockets = (
   orderData: IOrderData,
   storeState: TStoreState
 ) => {
+  debugger
+
   const useSocketsFilters = storeState.socketFilters.sockets
   // TODO: Get from storage
   const gemSocketsInOrder = false

@@ -1,9 +1,9 @@
-import { TStoreState } from "../redux/store"
+import { TMessageFrom, TMessageType } from "../types/messageTypes"
 
 export type TTabMessage<T> = {
-  type: "CheckSession" | "StartSearch" | "StopSearch"
+  type: TMessageType
   data: T
-  from: "EnhancedFilterPopup"
+  from: TMessageFrom
 }
 
 export const sendMessageToCurrentTab = <T, U>(
@@ -17,13 +17,16 @@ export const sendMessageToCurrentTab = <T, U>(
   })
 }
 
-export const listenToChromeMessages = <
-  M = TStoreState,
-  C = undefined,
-  R = undefined
->(
-  callback: (message: TTabMessage<M>) => C,
-  getResponse?: (message: TTabMessage<M>, callbackResult: C) => R
+export const sendRuntimeMessage = <T, U>(
+  message: TTabMessage<T>,
+  callback?: (response: U) => void
+) => {
+  if (callback) chrome.runtime.sendMessage(message, callback)
+  else chrome.runtime.sendMessage(message)
+}
+
+export const listenToChromeMessages = <M = string, R = void>(
+  callback: (message: TTabMessage<M>) => R
 ) => {
   chrome.runtime.onMessage.addListener(
     (
@@ -31,13 +34,10 @@ export const listenToChromeMessages = <
       sender: chrome.runtime.MessageSender,
       response: (response?: any) => void
     ) => {
-      if (!message.from || message.from !== "EnhancedFilterPopup") return
-
       const callbackResult = callback(message)
 
-      if (getResponse) {
-        const responseData = getResponse(message, callbackResult)
-        response(responseData)
+      if (callbackResult) {
+        response(callbackResult)
       }
     }
   )

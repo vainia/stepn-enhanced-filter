@@ -1,9 +1,7 @@
-export type TMessageFrom = "HostSiteScript"
-// TODO: maybe make shared
-export type TMessageType = "CheckSession" | "StartSearch" | "StopSearch"
+import { TMessageFrom, TMessageType } from "../types/messageTypes"
 
 export const listenToWindowMessages = (
-  callback: (type: TMessageType, message: any) => void
+  callback: (type: TMessageType, message: any, from: TMessageFrom) => void
 ) => {
   window.addEventListener(
     "message",
@@ -15,8 +13,7 @@ export const listenToWindowMessages = (
       }
     }) => {
       const eventData = event.data
-      if (eventData.from !== "HostSiteScript") return
-      callback(eventData.type, eventData.message)
+      callback(eventData.type, eventData.message, eventData.from)
     }
   )
 }
@@ -24,7 +21,7 @@ export const listenToWindowMessages = (
 export const sendWindowMessage = <M>(
   data: M,
   type: TMessageType,
-  from: TMessageFrom = "HostSiteScript"
+  from: TMessageFrom
 ) => {
   window.postMessage({
     from,

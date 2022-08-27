@@ -1,6 +1,13 @@
+import { TStoreState } from "../redux/store"
 import { inChromeExtensionPopupContext } from "../services/chromeExtensionService"
-import { listenToChromeMessages } from "../services/chromeMessagingService"
-import { sendWindowMessage } from "../services/windowMessagingService"
+import {
+  listenToChromeMessages,
+  sendRuntimeMessage,
+} from "../services/chromeMessagingService"
+import {
+  listenToWindowMessages,
+  sendWindowMessage,
+} from "../services/windowMessagingService"
 
 const loadContentPrivilegedScript = () => {
   const scriptUrl = "static/js/contentPrivileged.js"
@@ -16,17 +23,24 @@ const loadContentPrivilegedScript = () => {
 }
 
 if (!inChromeExtensionPopupContext()) {
-  listenToChromeMessages((message) => {
-    const { data, type } = message
-    sendWindowMessage(data, type)
+  listenToChromeMessages<TStoreState>((message) => {
+    const { data, type, from } = message
+    if (from !== "ReactApp") return
+
+    sendWindowMessage(data, type, "ContentScript")
   })
 
-  // listenToWindowMessages((type, data) => {
-  //   if (type === "StopSearch") {
-  //     const message = data as string
-  //     console.log(message)
-  //   }
-  // })
+  listenToWindowMessages((type, data, from) => {
+    if (from !== "HostSiteScript") return
+
+    if (type === "CheckSession") {
+      sendRuntimeMessage({
+        data,
+        from: "ContentScript",
+        type: "CheckSession",
+      })
+    }
+  })
 
   loadContentPrivilegedScript()
 }
