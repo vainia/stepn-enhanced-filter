@@ -5,6 +5,17 @@ import AttributesFilterSectionComp from "./AttributesFilterSectionComp"
 import SocketsFilterSectionComp from "./SocketsFilterSectionComp"
 
 const FiltersSectionComp = () => {
+  // sendMessageToCurrentTab<null, string>(
+  //   {
+  //     type: "CheckSession",
+  //     data: null,
+  //     from: "EnhancedFilterPopup",
+  //   },
+  //   (sessionId) => {
+  //     if (!sessionId) alert("Not logged in")
+  //   }
+  // )
+
   return (
     <>
       <Sheet sx={{ p: 1 }} />

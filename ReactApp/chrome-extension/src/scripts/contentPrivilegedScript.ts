@@ -27,6 +27,10 @@ listenToWindowMessages((type, data) => {
 
     applyEnhancedFilters(storeState, sessionId)
   }
+  if (type === "CheckSession") {
+    const sessionId = getSessionId()
+    // TODO: post session back
+  }
 })
 
 interceptStepnRequests()

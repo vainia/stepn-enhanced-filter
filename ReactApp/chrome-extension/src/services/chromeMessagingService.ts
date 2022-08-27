@@ -1,7 +1,7 @@
 import { TStoreState } from "../redux/store"
 
 export type TTabMessage<T> = {
-  type: "StartSearch" | "StopSearch"
+  type: "CheckSession" | "StartSearch" | "StopSearch"
   data: T
   from: "EnhancedFilterPopup"
 }

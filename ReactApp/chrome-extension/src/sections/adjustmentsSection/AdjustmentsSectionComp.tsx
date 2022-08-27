@@ -1,5 +1,6 @@
-import { Box, TextField } from "@mui/joy"
+import { Box, Button, TextField } from "@mui/joy"
 import { useState } from "react"
+import TagsOptionsComp from "../../components/TagsOptionsComp"
 import TransitionAlertComp from "../../components/TransitionAlertComp"
 
 const AdjustmentsSectionComp = () => {
@@ -41,6 +42,34 @@ const AdjustmentsSectionComp = () => {
             setTimeoutBetweenRequests(parseFloat(e.target.value))
           }
         />
+
+        <TagsOptionsComp
+          options={[
+            {
+              data: "order",
+            },
+            {
+              data: "chain",
+            },
+            {
+              data: "type",
+            },
+            {
+              data: "gType",
+            },
+            {
+              data: "quality",
+            },
+            {
+              data: "level",
+            },
+            {
+              data: "breed",
+            },
+          ]}
+          label={"Included request parameters"}
+        />
+        <Button>Restore settings</Button>
       </Box>
     </>
   )

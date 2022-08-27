@@ -1,5 +1,6 @@
 export type TMessageFrom = "HostSiteScript"
-export type TMessageType = "StartSearch" | "StopSearch"
+// TODO: maybe make shared
+export type TMessageType = "CheckSession" | "StartSearch" | "StopSearch"
 
 export const listenToWindowMessages = (
   callback: (type: TMessageType, message: any) => void

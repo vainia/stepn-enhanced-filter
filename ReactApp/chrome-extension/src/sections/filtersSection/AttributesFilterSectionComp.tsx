@@ -4,14 +4,12 @@ import AttributesSliderComp from "../../components/AttributesSliderComp"
 import AttributeTypeComp from "../../components/poppers/AttributeTypeComp"
 import {
   attributeFilterSlice,
-  selectAttributeFilters,
   selectAttributeFiltersActive,
   selectAvailableAttributeTypes,
 } from "../../redux/reducers/attributesFilterReducer"
 import { useAppDispatch, useAppSelector } from "../../redux/store"
 
 const AttributesFilterSectionComp = () => {
-  const attributeFilters = useAppSelector(selectAttributeFilters)
   const attributeFiltersActive = useAppSelector(selectAttributeFiltersActive)
   const availableAttributeTypes = useAppSelector(selectAvailableAttributeTypes)
 
