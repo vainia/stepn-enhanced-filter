@@ -36,6 +36,8 @@ export interface IStepnOrder {
   v2: number
 }
 
+let searchInterrupted = false
+
 export const findSneakersByFilters = (
   pageIdx: number,
   sessionId: string,
@@ -44,7 +46,6 @@ export const findSneakersByFilters = (
   foundSneakerOrders: IStepnOrder[],
   notifyWithCurrentIterationInfo: (
     itIndex: number,
-    itSetCount: number,
     formattedSellPrice: string,
     foundOrdersAfterIt: IStepnOrder[]
   ) => void,
@@ -72,8 +73,9 @@ export const findSneakersByFilters = (
         for (let order of data) {
           currentOrderIteration++
           if (
-            limitResultsCount &&
-            foundSneakerOrders.length >= limitResultsCount
+            searchInterrupted ||
+            (limitResultsCount &&
+              foundSneakerOrders.length >= limitResultsCount)
           ) {
             resolve(true)
             return
@@ -81,7 +83,6 @@ export const findSneakersByFilters = (
 
           notifyWithCurrentIterationInfo(
             currentOrderIteration,
-            currentIterationSet,
             formatPrice(order.sellPrice),
             foundSneakerOrders
           )
@@ -108,7 +109,6 @@ export const findSneakersByFilters = (
           foundSneakerOrders.push(order)
           notifyWithCurrentIterationInfo(
             currentOrderIteration,
-            currentIterationSet,
             formatPrice(order.sellPrice),
             foundSneakerOrders
           )

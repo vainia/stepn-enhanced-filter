@@ -1,8 +1,10 @@
 import { getCookie } from "typescript-cookie"
 import { TStoreState } from "../redux/store"
+import { TSearchResultUpdate } from "../types/messageTypes"
 import { timeout } from "../utils/kronosUtils"
 import { findSneakersByFilters, IStepnOrder } from "./stepnApiService"
 import { interceptStepnRequests } from "./stepnInterceptorService"
+import { sendWindowMessage } from "./windowMessagingService"
 
 export const shiftToFirstAvailableSortOption = async () => {
   const sortDropdownButton = document.querySelector(
@@ -51,17 +53,18 @@ export const applyEnhancedFilters = async (
 
   const notifyWithCurrentIterationInfo = (
     itIndex: number,
-    itSetCount: number,
     formattedSellPrice: string,
     foundOrdersAfterIt: IStepnOrder[]
   ) => {
     foundSneakerOrders = foundOrdersAfterIt
-    // TODO: notify here
-    console.log(
-      itIndex,
-      itSetCount,
-      formattedSellPrice,
-      foundSneakerOrders.length
+    sendWindowMessage<TSearchResultUpdate>(
+      {
+        checkedSneakersCount: itIndex,
+        currentSneakerSellPrice: formattedSellPrice,
+        foundSneakersCount: foundSneakerOrders.length,
+      },
+      "SearchResultUpdate",
+      "HostSiteScript"
     )
   }
 

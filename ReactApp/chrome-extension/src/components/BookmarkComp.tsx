@@ -7,9 +7,9 @@ interface IBookmarkProps {
 
 const Bookmark = ({ identifier, name, callbackOnDelete }: IBookmarkProps) => {
   const onDelete = () => {}
-  // sendMessageToCurrentTab({ type: "deleteBookmark" }, callbackOnDelete)
+  // sendMessageToCurrentTab({ type: "DeleteBookmark" }, callbackOnDelete)
   const onActivate = () => {}
-  //sendMessageToCurrentTab({ type: "activateBookmark" })
+  //sendMessageToCurrentTab({ type: "ActivateBookmark" })
 
   return (
     <div key={identifier} className="bookmark">

@@ -10,6 +10,7 @@ export const sendMessageToCurrentTab = <T, U>(
   message: TTabMessage<T>,
   callback?: (response: U) => void
 ) => {
+  if (!chrome.tabs) return
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs[0].id
     if (!activeTab) return
@@ -21,6 +22,7 @@ export const sendRuntimeMessage = <T, U>(
   message: TTabMessage<T>,
   callback?: (response: U) => void
 ) => {
+  if (!chrome.runtime) return
   if (callback) chrome.runtime.sendMessage(message, callback)
   else chrome.runtime.sendMessage(message)
 }
@@ -28,6 +30,7 @@ export const sendRuntimeMessage = <T, U>(
 export const listenToChromeMessages = <M = string, R = void>(
   callback: (message: TTabMessage<M>) => R
 ) => {
+  if (!chrome.runtime) return
   chrome.runtime.onMessage.addListener(
     (
       message: TTabMessage<M>,

@@ -33,11 +33,11 @@ if (!inChromeExtensionPopupContext()) {
   listenToWindowMessages((type, data, from) => {
     if (from !== "HostSiteScript") return
 
-    if (type === "CheckSession") {
+    if (type === "CheckSession" || type === "SearchResultUpdate") {
       sendRuntimeMessage({
         data,
+        type,
         from: "ContentScript",
-        type: "CheckSession",
       })
     }
   })
