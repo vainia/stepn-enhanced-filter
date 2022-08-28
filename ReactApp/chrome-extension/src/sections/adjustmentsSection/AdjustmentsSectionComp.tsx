@@ -40,7 +40,8 @@ const AdjustmentsSectionComp = () => {
             dispatch(
               settingsSlice.actions.update({
                 ...settings,
-                limitResultsCount: parseInt(e.target.value),
+                // Do not allow negatives
+                limitResultsCount: parseInt(e.target.value) || 1,
               })
             )
           }}
@@ -55,7 +56,8 @@ const AdjustmentsSectionComp = () => {
             dispatch(
               settingsSlice.actions.update({
                 ...settings,
-                requestTimeoutSeconds: parseFloat(e.target.value),
+                // Do not allow negatives
+                requestTimeoutSeconds: parseFloat(e.target.value) || 0.1,
               })
             )
           }}
