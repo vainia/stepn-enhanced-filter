@@ -156,12 +156,9 @@ const FiltersSectionComp = () => {
         )}
 
         {/* TODOs */}
-        {/* Add credits section */}
-        {/* Move to settings sneakersPerPage */}
         {/* Hook up params */}
-        {/* Lost session handling */}
+        {/* Move to settings sneakersPerPage */}
         {/* Setting for selector of sort button */}
-        {/* Save preset -> name -> confirm */}
       </Box>
     </>
   )
