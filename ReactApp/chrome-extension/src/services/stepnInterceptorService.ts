@@ -1,4 +1,3 @@
-import { postMessageFromPrivilegedContentToExtension } from "./chromeExtensionService"
 import { IStepnOrder } from "./stepnApiService"
 
 // eslint-disable-next-line
@@ -47,11 +46,6 @@ export const interceptStepnRequests = (foundSneakerOrders?: IStepnOrder[]) => {
         .json()
         .then((body) => {
           response.json = () => {
-            // TODO: update to use
-            postMessageFromPrivilegedContentToExtension("newOrderData", {
-              order: body.data,
-            })
-
             const avoidInterception =
               requestSimulatedByExtension ||
               !foundSneakerOrders ||

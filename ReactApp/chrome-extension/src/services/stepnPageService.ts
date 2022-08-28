@@ -45,11 +45,7 @@ export const applyEnhancedFilters = async (
   let pageIndex = 0
   let foundSneakerOrders: IStepnOrder[] = []
 
-  // TODO: define values
-  const limitResultsCount = 5
-  const requestTimeoutSeconds = 0.25
-
-  //TODO: notify popup to display progress element
+  const { limitResultsCount, requestTimeoutSeconds } = storeState.settings
 
   const notifyWithCurrentIterationInfo = (
     itIndex: number,
@@ -81,11 +77,13 @@ export const applyEnhancedFilters = async (
       storeState
     )
     if (finishedFiltering) {
+      if (foundSneakerOrders.length === 0) break
+
       interceptStepnRequests(foundSneakerOrders)
 
       // Interceptor will alter sort results with found sneakers
       shiftToFirstAvailableSortOption()
-      return
+      break
     }
   }
 }

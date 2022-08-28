@@ -9,7 +9,8 @@ import {
 import { CircularProgress, Skeleton } from "@mui/material"
 import { useState } from "react"
 import ProgressBar from "../../components/ProgressBar"
-import store from "../../redux/store"
+import { selectSettings } from "../../redux/reducers/settingsReducer"
+import store, { useAppSelector } from "../../redux/store"
 import {
   listenToChromeMessages,
   sendMessageToCurrentTab,
@@ -20,7 +21,7 @@ import AttributesFilterSectionComp from "./AttributesFilterSectionComp"
 import SocketsFilterSectionComp from "./SocketsFilterSectionComp"
 
 const FiltersSectionComp = () => {
-  const targetResultsCount = 5
+  const { limitResultsCount } = useAppSelector(selectSettings)
 
   // Let the page render when react app is rendered outside of the extension
   const [userLoggedIn, setUserLoggedIn] = useState(chrome.tabs ? false : true)
@@ -33,8 +34,7 @@ const FiltersSectionComp = () => {
     if (message.type === "CheckSession") setUserLoggedIn(!!message.data)
     if (message.type === "SearchResultUpdate") {
       const { foundSneakersCount } = message.data as TSearchResultUpdate
-      if (foundSneakersCount === targetResultsCount)
-        setDisableStartButton(false)
+      if (foundSneakersCount === limitResultsCount) setDisableStartButton(false)
       if (foundSneakersCount !== countResults)
         setCountResults(foundSneakersCount)
     }
@@ -107,13 +107,16 @@ const FiltersSectionComp = () => {
         <Button
           disabled={disableStartButton}
           onClick={() => {
+            setCountResults(0)
             setDisableStartButton(true)
-            const { attributeFilters, socketFilters } = store.getState()
+            const { attributeFilters, socketFilters, settings } =
+              store.getState()
             sendMessageToCurrentTab({
               type: "StartSearch",
               data: {
                 attributeFilters,
                 socketFilters,
+                settings,
               },
               from: "ReactApp",
             })
@@ -132,17 +135,33 @@ const FiltersSectionComp = () => {
 
         {disableStartButton && (
           <ProgressBar
-            maxProgress={targetResultsCount}
+            maxProgress={limitResultsCount}
             currentProgress={countResults}
           />
         )}
         {disableStartButton && (
-          <Button color="warning">Interrupt search</Button>
+          <Button
+            onClick={() => {
+              sendMessageToCurrentTab<null, string>({
+                type: "StopSearch",
+                data: null,
+                from: "ReactApp",
+              })
+              setDisableStartButton(false)
+            }}
+            color="warning"
+          >
+            Interrupt search
+          </Button>
         )}
 
-        {/* TODO: session lost | selector of sort button */}
-        {/* Apply filters section */}
-        {/* Save filters group section save filter -> name -> confirm */}
+        {/* TODOs */}
+        {/* Implement assigned points */}
+        {/* Move to settings sneakersPerPage */}
+        {/* Hook up params */}
+        {/* Lost session handling */}
+        {/* Setting for selector of sort button */}
+        {/* Save preset -> name -> confirm */}
       </Box>
     </>
   )

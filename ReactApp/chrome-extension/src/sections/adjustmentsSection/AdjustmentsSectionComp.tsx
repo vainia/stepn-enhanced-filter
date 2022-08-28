@@ -1,11 +1,16 @@
 import { Box, Button, TextField } from "@mui/joy"
-import { useState } from "react"
 import TagsOptionsComp from "../../components/TagsOptionsComp"
 import TransitionAlertComp from "../../components/TransitionAlertComp"
+import {
+  selectSettings,
+  settingsSlice,
+} from "../../redux/reducers/settingsReducer"
+import { useAppDispatch, useAppSelector } from "../../redux/store"
+import { defaultRequestParams } from "../../services/stepnApiService"
 
 const AdjustmentsSectionComp = () => {
-  const [sneakersSearchLimit, setSneakersSearchLimit] = useState(5)
-  const [timeoutBetweenRequests, setTimeoutBetweenRequests] = useState(0.5)
+  const settings = useAppSelector(selectSettings)
+  const dispatch = useAppDispatch()
 
   return (
     <>
@@ -29,47 +34,56 @@ const AdjustmentsSectionComp = () => {
           size="md"
           variant="soft"
           type="number"
-          value={sneakersSearchLimit}
-          onChange={(e) => setSneakersSearchLimit(parseInt(e.target.value))}
+          value={settings.limitResultsCount}
+          onChange={(e) => {
+            dispatch(
+              settingsSlice.actions.update({
+                ...settings,
+                limitResultsCount: parseInt(e.target.value),
+              })
+            )
+          }}
         />
         <TextField
           label="Timeout between requests in seconds"
           size="md"
           variant="soft"
           type="number"
-          value={timeoutBetweenRequests}
-          onChange={(e) =>
-            setTimeoutBetweenRequests(parseFloat(e.target.value))
-          }
+          value={settings.requestTimeoutSeconds}
+          onChange={(e) => {
+            dispatch(
+              settingsSlice.actions.update({
+                ...settings,
+                requestTimeoutSeconds: parseInt(e.target.value),
+              })
+            )
+          }}
         />
 
         <TagsOptionsComp
-          options={[
-            {
-              data: "order",
-            },
-            {
-              data: "chain",
-            },
-            {
-              data: "type",
-            },
-            {
-              data: "gType",
-            },
-            {
-              data: "quality",
-            },
-            {
-              data: "level",
-            },
-            {
-              data: "breed",
-            },
-          ]}
+          options={defaultRequestParams.map((p) => {
+            return {
+              data: p,
+            }
+          })}
+          selectedOptions={settings.includedRequestParams.map((p) => {
+            return {
+              data: p,
+            }
+          })}
+          updateOptions={(newParams) => {
+            dispatch(
+              settingsSlice.actions.update({
+                ...settings,
+                includedRequestParams: newParams.map((p) => p.data),
+              })
+            )
+          }}
           label={"Included request parameters"}
         />
-        <Button>Restore settings</Button>
+        <Button onClick={() => dispatch(settingsSlice.actions.restore())}>
+          Restore settings
+        </Button>
       </Box>
     </>
   )

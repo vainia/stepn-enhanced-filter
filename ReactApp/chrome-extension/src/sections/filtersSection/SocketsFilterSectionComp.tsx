@@ -10,7 +10,7 @@ import {
 
 const SocketsFilterSectionComp = () => {
   const socketFilters = useAppSelector(selectSocketFilters)
-  const socketFiltersCount = socketFilters.length
+  const socketFiltersCount = socketFilters.sockets.length
 
   const dispatch = useAppDispatch()
 
@@ -60,7 +60,7 @@ const SocketsFilterSectionComp = () => {
 
       {socketFiltersCount > 0 && (
         <Box>
-          {socketFilters.map((v, i) => (
+          {socketFilters.sockets.map((v, i) => (
             <GemSocketComp
               key={i}
               index={v.index}
@@ -72,6 +72,11 @@ const SocketsFilterSectionComp = () => {
       )}
 
       <Checkbox
+        checked={socketFilters.followOrder}
+        onChange={(e) => {
+          const { checked } = e.target
+          dispatch(socketFilterSlice.actions.setFollowOrder(checked))
+        }}
         uncheckedIcon={<Close />}
         label="Gem sockets must follow the order"
       />

@@ -3,9 +3,22 @@ import { timeout } from "../utils/kronosUtils"
 import { allFiltersMatching } from "./stepnFilterService"
 import { EGemQuality, EGemType } from "./stepnGemService"
 import { formatPrice } from "./stepnPageService"
+import { listenToWindowMessages } from "./windowMessagingService"
 
 let paramsDefinedByUser =
   "&order=2001&chain=103&type=&gType=&quality=&level=0&breed=0"
+
+export const defaultRequestParams = [
+  "order",
+  "chain", // Sol, Bnb, Eth
+  "type", // Sneakers or Shoe boxes
+  "gType",
+  "quality", // Common, Uncommon, Rare, Epic, Legendary
+  "level",
+  "bread", // Mint - there is a spelling mistake in the API 🥖🍞🥐🥯
+  "breed", // To accommodate query param once API is fixed
+  "otd", // Rarity
+]
 
 const sneakersPerPage = 60
 const stepnApiOrigin = "https://api.stepn.com"
@@ -37,6 +50,16 @@ export interface IStepnOrder {
 }
 
 let searchInterrupted = false
+listenToWindowMessages((type, data, from) => {
+  if (from !== "ContentScript") return
+
+  if (type === "StartSearch") {
+    searchInterrupted = false
+  }
+  if (type === "StopSearch") {
+    searchInterrupted = true
+  }
+})
 
 export const findSneakersByFilters = (
   pageIdx: number,

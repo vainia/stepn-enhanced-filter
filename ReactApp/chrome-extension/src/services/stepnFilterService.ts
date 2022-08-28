@@ -5,14 +5,11 @@ export const checkBaseAttributes = (
   orderData: IOrderData,
   storeState: TStoreState
 ) => {
-  debugger
-
   const orderBaseEff = orderData.attrs[0] / 10
   const orderBaseLuck = orderData.attrs[1] / 10
   const orderBaseCom = orderData.attrs[2] / 10
   const orderBaseRes = orderData.attrs[3] / 10
 
-  // TODO: update algorithm to only consider presented values
   const minEffBase = storeState.attributeFilters.efficiency.minBase || 0
   const minLuckBase = storeState.attributeFilters.luck.minBase || 0
   const minComBase = storeState.attributeFilters.comfort.minBase || 0
@@ -31,14 +28,10 @@ export const checkSockets = (
   orderData: IOrderData,
   storeState: TStoreState
 ) => {
-  debugger
-
-  const useSocketsFilters = storeState.socketFilters.sockets
-  // TODO: Get from storage
-  const gemSocketsInOrder = false
+  const gemSocketsInOrder = storeState.socketFilters.followOrder
   const socketFilters = storeState.socketFilters.sockets
 
-  if (!useSocketsFilters) return true
+  if (!socketFilters || socketFilters.length === 0) return true
 
   if (gemSocketsInOrder) {
     const socketsMatching = orderData.holes.every((hole, idx) => {
@@ -50,7 +43,6 @@ export const checkSockets = (
       }
 
       const typeFilterMatch =
-        // TODO: verify this condition
         typeof socketFilters[socketOrder].type === "undefined" ||
         socketFilters[socketOrder].type === hole.type
 
@@ -76,7 +68,6 @@ export const checkSockets = (
 
         const typeFilterMatch =
           typeof socketFilter.type === "undefined" ||
-          // TODO: test if comparison works
           socketFilter.type === filteredHole.type
 
         const qualityFilterMatch =

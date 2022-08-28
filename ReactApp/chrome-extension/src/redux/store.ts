@@ -8,15 +8,18 @@ import socketFilterReducer, {
 } from "./reducers/socketFilterReducer"
 import { persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage"
+import settingsReducer, { ISettingsState } from "./reducers/settingsReducer"
 
 const rootReducer = combineReducers({
   socketFilters: socketFilterReducer,
   attributeFilters: attributeFilterReducer,
+  settings: settingsReducer,
 })
 
 export type TStoreState = {
   attributeFilters: TAttributeFilterState
   socketFilters: ISocketFilterState
+  settings: ISettingsState
 }
 
 export const persistentStorageKey = "enhancedFilter"
