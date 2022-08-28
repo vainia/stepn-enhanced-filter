@@ -1,5 +1,6 @@
 export type TMessageFrom = "HostSiteScript" | "ContentScript" | "ReactApp"
 export type TMessageType =
+  | "StartIntercepting"
   | "CheckSession"
   | "StartSearch"
   | "StopSearch"

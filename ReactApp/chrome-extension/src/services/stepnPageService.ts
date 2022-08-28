@@ -6,10 +6,12 @@ import { findSneakersByFilters, IStepnOrder } from "./stepnApiService"
 import { interceptStepnRequests } from "./stepnInterceptorService"
 import { sendWindowMessage } from "./windowMessagingService"
 
-export const shiftToFirstAvailableSortOption = async () => {
-  const sortDropdownButton = document.querySelector(
-    "#__next > main > div:last-child > div:last-child [id^='headlessui-listbox-button']"
-  )
+export const shiftToFirstAvailableSortOption = async (
+  storeState: TStoreState
+) => {
+  const { availableSortOptionBtnSelector, sortDropdownBtnSelector } =
+    storeState.settings
+  const sortDropdownButton = document.querySelector(sortDropdownBtnSelector)
   if (sortDropdownButton === null) {
     alert("Native sort dropdown is not accessible")
     return
@@ -21,7 +23,7 @@ export const shiftToFirstAvailableSortOption = async () => {
   await timeout(0.25 * 1000)
 
   const availableSortOption = document.querySelector(
-    "li[id^=headlessui-listbox-option]:not([aria-selected])"
+    availableSortOptionBtnSelector
   )
   if (availableSortOption === null) {
     alert("Available sort option is not accessible")
@@ -79,10 +81,10 @@ export const applyEnhancedFilters = async (
     if (finishedFiltering) {
       if (foundSneakerOrders.length === 0) break
 
-      interceptStepnRequests(foundSneakerOrders)
+      interceptStepnRequests(storeState, foundSneakerOrders)
 
       // Interceptor will alter sort results with found sneakers
-      shiftToFirstAvailableSortOption()
+      shiftToFirstAvailableSortOption(storeState)
       break
     }
   }

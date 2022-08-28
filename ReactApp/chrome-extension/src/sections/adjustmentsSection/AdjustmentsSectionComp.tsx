@@ -6,7 +6,7 @@ import {
   settingsSlice,
 } from "../../redux/reducers/settingsReducer"
 import { useAppDispatch, useAppSelector } from "../../redux/store"
-import { defaultRequestParams } from "../../services/stepnApiService"
+import { defaultRequestParams } from "../../services/stepnInterceptorService"
 
 const AdjustmentsSectionComp = () => {
   const settings = useAppSelector(selectSettings)
@@ -19,7 +19,8 @@ const AdjustmentsSectionComp = () => {
         title="Warning!"
         message="You have to be fully aware of your actions and adjust these values on your own risk. 
         Make sure you are aware of the consequences.
-        When requests frequency exceeds STEPN's Cloudflare Rate Limiting your IP address might be blocked for up to 24 hours."
+        When requests frequency exceeds STEPN's Cloudflare Rate Limiting boundaries your IP address might get blocked for up to 24 hours.
+        In case if that happens you can avoid limitations by using VPN."
       />
       <Box
         sx={{
@@ -80,6 +81,34 @@ const AdjustmentsSectionComp = () => {
             )
           }}
           label={"Included request parameters"}
+        />
+        <TextField
+          label="Native sort dropdown button selector"
+          size="md"
+          variant="soft"
+          value={settings.sortDropdownBtnSelector}
+          onChange={(e) => {
+            dispatch(
+              settingsSlice.actions.update({
+                ...settings,
+                sortDropdownBtnSelector: e.target.value,
+              })
+            )
+          }}
+        />
+        <TextField
+          label="Native available sort option button selector"
+          size="md"
+          variant="soft"
+          value={settings.availableSortOptionBtnSelector}
+          onChange={(e) => {
+            dispatch(
+              settingsSlice.actions.update({
+                ...settings,
+                availableSortOptionBtnSelector: e.target.value,
+              })
+            )
+          }}
         />
         <Button
           color="neutral"

@@ -154,11 +154,6 @@ const FiltersSectionComp = () => {
             Interrupt search
           </Button>
         )}
-
-        {/* TODOs */}
-        {/* Hook up params */}
-        {/* Move to settings sneakersPerPage */}
-        {/* Setting for selector of sort button */}
       </Box>
     </>
   )

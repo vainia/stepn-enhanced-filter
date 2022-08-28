@@ -1,44 +1,53 @@
+import { TStoreState } from "../redux/store"
 import { IStepnOrder } from "./stepnApiService"
 
-// eslint-disable-next-line
+export const defaultRequestParams = [
+  "order",
+  "chain", // Sol, Bnb, Eth
+  "type", // Sneakers or Shoe boxes
+  "gType",
+  "quality", // Common, Uncommon, Rare, Epic, Legendary
+  "level",
+  "bread", // Mint - there is a spelling mistake in the API 🥖🍞🥐🥯
+  "breed", // To accommodate query param once API is fixed
+  "otd", // Rarity
+]
+
 let paramsDefinedByUser =
-  "&order=2001&chain=103&type=&gType=&quality=&level=0&breed=0"
+  // Some default params 🍞
+  "&order=2001&chain=103&type=&gType=&quality=&level=0&bread=0"
 
 const { fetch: origFetch } = window
 
 // Intercept the order list request and replace it with the target order list
-export const interceptStepnRequests = (foundSneakerOrders?: IStepnOrder[]) => {
+export const interceptStepnRequests = (
+  storeState: TStoreState,
+  foundSneakerOrders?: IStepnOrder[]
+) => {
   window.fetch = async (...args) => {
     return new Promise(async (resolve, reject) => {
-      const response = await origFetch(...args)
       const requestUrl = args[0] as string
-
       const orderListRequest = requestUrl.indexOf("orderlist") !== -1
+      const requestSimulatedByExtension = requestUrl.indexOf("simulated") > 0
+
+      if (orderListRequest && requestSimulatedByExtension) {
+        args[0] = args[0] + paramsDefinedByUser
+      }
+
+      const response = await origFetch(...args)
+
       if (!orderListRequest) {
         resolve(response)
       }
-
-      const requestSimulatedByExtension = requestUrl.indexOf("simulated") > 0
 
       // If new order list is requested by user grab native filter parameters to combine with enhanced filter
       if (!requestSimulatedByExtension) {
         var url = new URL(requestUrl)
 
-        paramsDefinedByUser =
-          "&order=" +
-          url.searchParams.get("order") +
-          "&chain=" +
-          url.searchParams.get("chain") +
-          "&type=" +
-          url.searchParams.get("type") +
-          "&gType=" +
-          url.searchParams.get("gType") +
-          "&quality=" +
-          url.searchParams.get("quality") +
-          "&level=" +
-          url.searchParams.get("level") +
-          "&breed=" +
-          url.searchParams.get("breed")
+        const { includedRequestParams } = storeState.settings
+        paramsDefinedByUser = includedRequestParams.reduce((prev, curr) => {
+          return `${prev}&${curr}=${url.searchParams.get(curr)}`
+        }, "")
       }
 
       response

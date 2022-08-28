@@ -26,6 +26,9 @@ listenToWindowMessages((type, data, from) => {
     const sessionId = getSessionId()
     sendWindowMessage(sessionId, "CheckSession", "HostSiteScript")
   }
-})
 
-interceptStepnRequests()
+  if (type === "StartIntercepting") {
+    const storeState = data as TStoreState
+    interceptStepnRequests(storeState)
+  }
+})
