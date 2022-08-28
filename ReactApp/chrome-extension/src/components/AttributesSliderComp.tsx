@@ -1,8 +1,11 @@
 import Box from "@mui/joy/Box"
 import { Slider } from "@mui/material"
-import * as React from "react"
-import { attributeFilterSlice } from "../redux/reducers/attributesFilterReducer"
-import { useAppDispatch } from "../redux/store"
+import { useEffect, useState } from "react"
+import {
+  attributeFilterSlice,
+  selectAttributeFilters,
+} from "../redux/reducers/attributesFilterReducer"
+import { useAppDispatch, useAppSelector } from "../redux/store"
 import { TAttribute } from "../services/stepnAttributesService"
 
 type TAttributesSliderComp = {
@@ -18,7 +21,15 @@ export default function AttributesSliderComp({
   minBase = 0,
   minAssigned = 0,
 }: TAttributesSliderComp) {
-  const [value, setValue] = React.useState([minBase, minAssigned])
+  const { onlyBaseAttributes } = useAppSelector(selectAttributeFilters)
+
+  const [value, setValue] = useState<number | number[]>([minBase, minAssigned])
+
+  useEffect(() => {
+    if (onlyBaseAttributes) setValue(minBase)
+    else setValue([minBase, minAssigned])
+  }, [onlyBaseAttributes, minAssigned, minBase])
+
   const dispatch = useAppDispatch()
 
   const handleChange = (
@@ -29,8 +40,8 @@ export default function AttributesSliderComp({
     dispatch(
       attributeFilterSlice.actions.setTypeValues({
         type,
-        minBase: value[0],
-        minAssigned: value[1],
+        minBase: typeof value === "number" ? value : value[0],
+        minAssigned: typeof value === "number" ? 0 : value[1],
       })
     )
     setValue(newValue as [])

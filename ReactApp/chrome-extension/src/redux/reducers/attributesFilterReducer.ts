@@ -3,25 +3,31 @@ import { TAttribute } from "../../services/stepnAttributesService"
 import { RootState } from "../store"
 
 export type TAttributeFilterState = {
-  [key in TAttribute]: {
-    usedBy?: number
-    minBase?: number
-    minAssigned?: number
+  attrs: {
+    [key in TAttribute]: {
+      usedBy?: number
+      minBase?: number
+      minAssigned?: number
+    }
   }
+  onlyBaseAttributes: boolean
 }
 
 const initialState: TAttributeFilterState = {
-  comfort: {},
-  efficiency: {},
-  luck: {},
-  resilience: {},
+  attrs: {
+    comfort: {},
+    efficiency: {},
+    luck: {},
+    resilience: {},
+  },
+  onlyBaseAttributes: false,
 }
 
 const removeByFilterId = (state: TAttributeFilterState, usedBy: number) => {
-  for (const key in state) {
-    if (state[key as TAttribute].usedBy === usedBy) {
-      const oldData = state[key as TAttribute]
-      state[key as TAttribute] = {}
+  for (const key in state.attrs) {
+    if (state.attrs[key as TAttribute].usedBy === usedBy) {
+      const oldData = state.attrs[key as TAttribute]
+      state.attrs[key as TAttribute] = {}
       return oldData
     }
   }
@@ -37,7 +43,7 @@ export const attributeFilterSlice = createSlice({
     ) => {
       const { usedBy, newType } = action.payload
       const data = removeByFilterId(state, usedBy) || { usedBy }
-      state[newType] = data
+      state.attrs[newType] = data
     },
     setTypeValues: (
       state,
@@ -48,13 +54,16 @@ export const attributeFilterSlice = createSlice({
       }>
     ) => {
       const { type, minBase, minAssigned } = action.payload
-      state[type] = { ...state[type], minBase, minAssigned }
+      state.attrs[type] = { ...state.attrs[type], minBase, minAssigned }
     },
     removeUsedByFilterId: (
       state,
       action: PayloadAction<{ usedBy: number }>
     ) => {
       removeByFilterId(state, action.payload.usedBy)
+    },
+    updateOnlyBaseAttributes: (state, action: PayloadAction<boolean>) => {
+      state.onlyBaseAttributes = action.payload
     },
   },
 })
@@ -63,10 +72,11 @@ export const selectAttributeFilters = (state: RootState) =>
   state.attributeFilters
 
 export const selectAvailableAttributeTypes = (state: RootState) =>
-  Object.keys(state.attributeFilters)
+  Object.keys(state.attributeFilters.attrs)
     .map((key) => {
       if (
-        typeof state.attributeFilters[key as TAttribute].usedBy === "undefined"
+        typeof state.attributeFilters.attrs[key as TAttribute].usedBy ===
+        "undefined"
       ) {
         return key as TAttribute
       }
@@ -81,9 +91,9 @@ interface IActiveAttributeFilter {
   minAssigned?: number
 }
 export const selectAttributeFiltersActive = (state: RootState) =>
-  Object.keys(state.attributeFilters)
+  Object.keys(state.attributeFilters.attrs)
     .map((key) => {
-      const filter = state.attributeFilters[key as TAttribute]
+      const filter = state.attributeFilters.attrs[key as TAttribute]
       if (typeof filter.usedBy !== "undefined") {
         return {
           usedBy: filter.usedBy,

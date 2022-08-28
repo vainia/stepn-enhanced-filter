@@ -54,7 +54,7 @@ const AdjustmentsSectionComp = () => {
             dispatch(
               settingsSlice.actions.update({
                 ...settings,
-                requestTimeoutSeconds: parseInt(e.target.value),
+                requestTimeoutSeconds: parseFloat(e.target.value),
               })
             )
           }}
@@ -81,7 +81,10 @@ const AdjustmentsSectionComp = () => {
           }}
           label={"Included request parameters"}
         />
-        <Button onClick={() => dispatch(settingsSlice.actions.restore())}>
+        <Button
+          color="neutral"
+          onClick={() => dispatch(settingsSlice.actions.restore())}
+        >
           Restore settings
         </Button>
       </Box>

@@ -156,7 +156,7 @@ const FiltersSectionComp = () => {
         )}
 
         {/* TODOs */}
-        {/* Implement assigned points */}
+        {/* Add credits section */}
         {/* Move to settings sneakersPerPage */}
         {/* Hook up params */}
         {/* Lost session handling */}

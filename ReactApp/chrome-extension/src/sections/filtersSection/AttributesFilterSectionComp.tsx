@@ -1,9 +1,10 @@
-import { AutoGraph, RemoveCircleOutline } from "@mui/icons-material"
-import { Box, Button } from "@mui/joy"
+import { AutoGraph, Close, RemoveCircleOutline } from "@mui/icons-material"
+import { Box, Button, Checkbox } from "@mui/joy"
 import AttributesSliderComp from "../../components/AttributesSliderComp"
 import AttributeTypeComp from "../../components/poppers/AttributeTypeComp"
 import {
   attributeFilterSlice,
+  selectAttributeFilters,
   selectAttributeFiltersActive,
   selectAvailableAttributeTypes,
 } from "../../redux/reducers/attributesFilterReducer"
@@ -12,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store"
 const AttributesFilterSectionComp = () => {
   const attributeFiltersActive = useAppSelector(selectAttributeFiltersActive)
   const availableAttributeTypes = useAppSelector(selectAvailableAttributeTypes)
+  const { onlyBaseAttributes } = useAppSelector(selectAttributeFilters)
 
   const dispatch = useAppDispatch()
 
@@ -85,6 +87,18 @@ const AttributesFilterSectionComp = () => {
           />
         </Box>
       ))}
+
+      <Checkbox
+        checked={onlyBaseAttributes}
+        onChange={(e) => {
+          const { checked } = e.target
+          dispatch(
+            attributeFilterSlice.actions.updateOnlyBaseAttributes(checked)
+          )
+        }}
+        label="Sneaker must only contain base attributes"
+        uncheckedIcon={<Close />}
+      />
     </>
   )
 }
