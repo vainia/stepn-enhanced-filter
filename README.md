@@ -1,6 +1,6 @@
 # Enhanced Filter for StepN Marketplace
 
-## Description S-05752 (OPEN)
+## Description S-05752 (OPEN_LABELED)
 
 Filter for StepN marketplace but convenient ⚡️
 
