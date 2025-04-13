@@ -1,6 +1,6 @@
 # Enhanced Filter for StepN Marketplace
 
-## Description
+## Description S-05752 (OPEN)
 
 Filter for StepN marketplace but convenient ⚡️
 
